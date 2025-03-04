@@ -1,0 +1,6 @@
+[
+  { "speedId": "slow", "value": 50 },
+  { "speedId": "normal", "value": 100 },
+  { "speedId": "fast", "value": 150 },
+  { "speedId": "double", "value": 200 }
+]

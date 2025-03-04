@@ -1,0 +1,28 @@
+[
+  {
+    "songId": "be3054df-3397-4ea4-ace4-0c546f10c9f1",
+    "title": "Moonlight Sonata",
+    "composer": "Ludwig van Beethoven",
+    "tempo": 60,
+    "genres": ["classical"],
+    "rating": 4.8,
+    "keySignature": "C# minor",
+    "timeSignature": {
+      "numerator": 4,
+      "denominator": 4
+    }
+  },
+  {
+    "songId": "a79067ee-506f-4b65-9c9b-6a4a09eacb8e",
+    "title": "Sweet Child O' Mine",
+    "composer": "Guns N' Roses",
+    "tempo": 120,
+    "genres": ["rock"],
+    "rating": 4.7,
+    "keySignature": "E major",
+    "timeSignature": {
+      "numerator": 4,
+      "denominator": 4
+    }
+  }
+]
