@@ -1,0 +1,76 @@
+[
+  {
+    "compositionId": "d1fdb14b-8853-4358-b6d6-643583655c33",
+    "measures": [
+      {
+        "measureId": "m1",
+        "notes": [
+          {
+            "noteId": "n1",
+            "pitch": "C4",
+            "duration": 1.0,
+            "volume": 80
+          },
+          {
+            "noteId": "n2",
+            "pitch": "E4",
+            "duration": 1.0,
+            "volume": 80
+          }
+        ],
+        "timeSignature": {
+          "numerator": 4,
+          "denominator": 4
+        }
+      }
+    ],
+    "staves": [
+      {
+        "staffId": "st1",
+        "clef": "treble",
+        "measures": ["m1"]
+      }
+    ],
+    "compositionPrivacy": false,
+    "chords": [
+      {
+        "chordId": "ch1",
+        "pitch": "C",
+        "duration": 2.0,
+        "volume": 75,
+        "notes": ["n1", "n2"]
+      }
+    ],
+    "annotations": ["Practice slowly"]
+  },
+  {
+    "compositionId": "c9463c0a-127d-4d37-80a9-819b8cbefc8d",
+    "measures": [
+      {
+        "measureId": "m2",
+        "notes": [
+          {
+            "noteId": "n3",
+            "pitch": "G4",
+            "duration": 0.5,
+            "volume": 90
+          }
+        ],
+        "timeSignature": {
+          "numerator": 3,
+          "denominator": 4
+        }
+      }
+    ],
+    "staves": [
+      {
+        "staffId": "st2",
+        "clef": "bass",
+        "measures": ["m2"]
+      }
+    ],
+    "compositionPrivacy": true,
+    "chords": [],
+    "annotations": []
+  }
+]

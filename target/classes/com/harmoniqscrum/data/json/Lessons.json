@@ -1,0 +1,18 @@
+[
+  {
+    "lessonId": "3e597a2c-f7a8-4712-9e47-aa440bb90b37",
+    "title": "Classical Basics",
+    "assignedBy": "t1",
+    "songId": "s1",
+    "description": "Learn the basics of classical music.",
+    "completed": false
+  },
+  {
+    "lessonId": "359b4b73-05f3-4f67-9121-fb9ce10ba2e3",
+    "title": "Rock Rhythm",
+    "assignedBy": "t1",
+    "songId": "s2",
+    "description": "Understanding rock rhythms.",
+    "completed": true
+  }
+]
