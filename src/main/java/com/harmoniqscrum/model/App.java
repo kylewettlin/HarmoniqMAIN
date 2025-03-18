@@ -1,4 +1,4 @@
-package com.harmoniqscrum;
+package com.harmoniqscrum.model;
 
 import javafx.application.Application;
 import javafx.scene.Scene;

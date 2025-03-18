@@ -1,4 +1,4 @@
-package com.harmoniqscrum;
+package com.harmoniqscrum.model;
 
 public class Note {
     private String pitch;
