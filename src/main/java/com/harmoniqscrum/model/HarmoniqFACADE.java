@@ -17,7 +17,6 @@ public class HarmoniqFACADE {
         
     }
     
-    /*
     public List<Song> playSong(Song song) {
         
     }
@@ -62,6 +61,5 @@ public class HarmoniqFACADE {
     String keySignature, int numerator, int denominator) {
 
     }
-    */
 
 }
