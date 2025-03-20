@@ -12,17 +12,34 @@ public class Note {
     private int[] tuningOct = {2, 2, 1, 1, 1, 0};
     private int octave;
 
-    public Note(int string, int fret){
+    //default constructor (volume should be set to a default amount)
+    public Note(int string, int fret, double duration){
         this.string = string;
         this.fret = fret;
-        this.pitch = getPitch();
+        this.pitch = calculatePitch();
+        this.duration = duration;
+    }
+    //constructor for modified volume
+    public Note(int string, int fret, double duration, int volume){
+        this.string = string;
+        this.fret = fret;
+        this.pitch = calculatePitch();
+        this.duration = duration;
+        this.volume = volume;
+    }
+    //Constructor for rest
+    public Note(double duration){
+        this.duration = duration;
+        this.volume = 0;
     }
 
     public void play(){
 
     } 
 
-    public String getPitch(){
+    //calculates pitch based on string, fret, and tuning
+    //Need to add conversion from note name + octave to pitch
+    public String calculatePitch(){
         octave = tuningOct[string];
         String stringN = tuning[string];
         int startIndex = 0;
@@ -41,5 +58,15 @@ public class Note {
         }
         String pitchDisplay = notes[noteTracker]+", "+octave+" octave";
         return pitchDisplay;
+    }
+
+    public String getPitch(){
+        return pitch;
+    }
+    public int getString(){
+        return string;
+    }
+    public int getFret(){
+        return fret;
     }
 }
