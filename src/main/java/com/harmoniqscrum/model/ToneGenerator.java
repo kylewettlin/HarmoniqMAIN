@@ -1,4 +1,4 @@
-package com.harmoniqscrum;
+package com.harmoniqscrum.model;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;

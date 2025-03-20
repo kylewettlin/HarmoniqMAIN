@@ -1,4 +1,4 @@
-package com.harmoniqscrum;
+package com.harmoniqscrum.model;
 
 public class Lesson {
     private String title;
