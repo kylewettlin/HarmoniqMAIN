@@ -9,9 +9,8 @@ public class Note {
 
     private String[] notes = {"a","a#","b","c","c#","d","d#","e","f","f#","g","g#"};
     private String[] tuning = {"e","b","g","d","a","e"};
+    private int[] tuningOct = {2, 2, 1, 1, 1, 0};
     private int octave;
-
-    //Note(6, 0)
 
     public Note(int string, int fret){
         this.string = string;
@@ -24,22 +23,23 @@ public class Note {
     } 
 
     public String getPitch(){
+        octave = tuningOct[string];
         String stringN = tuning[string];
         int startIndex = 0;
-        for (int i = 0; i < notes.length; i++) {
-            if (notes[i].equals(stringN)) {
-                startIndex =  i; // Return the index if the target is found
+        for (int j = 0; j < notes.length;j++) {
+            if (notes[j].equals(stringN)) {
+                startIndex =  j;
             }
         }
-        int num = startIndex;
-        for(int i = startIndex; i<fret; i++){
-            num++;
-            if(num > notes.length){
+        int noteTracker = startIndex-1;
+        for(int i = 0; i<fret+1; i++){
+            noteTracker++;
+            if(noteTracker == notes.length){
                 octave++;
-                num = 0;
+                noteTracker = 0;
             }
-            //if(bigger than array of notes, octave up and move to beginning)
         }
-        return pitch;
+        String pitchDisplay = notes[noteTracker]+", "+octave+" octave";
+        return pitchDisplay;
     }
 }
