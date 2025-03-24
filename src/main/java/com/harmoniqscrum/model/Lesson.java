@@ -1,4 +1,4 @@
-package com.harmoniqscrum;
+package com.harmoniqscrum.model;
 import java.util.List;
 
 public class Lesson {

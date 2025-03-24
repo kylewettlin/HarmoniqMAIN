@@ -8,20 +8,61 @@ public class PlaybackEngine {
     private ArrayList<Integer> playbackSpeed;
     private boolean isLooping;
     private int metronomeSpeed;
+    
+    public PlaybackEngine() {
+        this.speed = 100; // Default speed
+        this.playbackSpeed = new ArrayList<>();
+        this.isLooping = false;
+        this.metronomeSpeed = 120; // Default BPM
+    }
+    
+    public PlaybackEngine(Song song) {
+        this();
+        this.song = song;
+    }
+    
+    public void setSong(Song song) {
+        this.song = song;
+    }
+    
+    public Song getSong() {
+        return song;
+    }
+    
+    public int getSpeed() {
+        return speed;
+    }
+    
+    public boolean isLooping() {
+        return isLooping;
+    }
+    
+    public void setLooping(boolean isLooping) {
+        this.isLooping = isLooping;
+    }
 
     public void adjustSpeed(int speed){
-
+        this.speed = speed;
     }
+    
     public void setMetronomeSpeed(int bpm){
-        
+        this.metronomeSpeed = bpm;
     }
+    
+    public int getMetronomeSpeed() {
+        return metronomeSpeed;
+    }
+    
     public void playMetronome(){
-
+        // Metronome playback implementation
     }
+    
     public void loopPlayback(int start, int end){
-
+        this.isLooping = true;
+        // Implement loop playback logic
     }
+    
     public void pause(){
-        
+        // Pause playback implementation
     }
 }
