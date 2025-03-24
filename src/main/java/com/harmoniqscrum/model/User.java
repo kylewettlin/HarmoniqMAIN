@@ -103,6 +103,16 @@ public class User {
         this.password = password;
     }
     
+    /**
+     * Check if the provided password matches the user's password
+     * 
+     * @param password The password to check
+     * @return true if the password matches, false otherwise
+     */
+    public boolean checkPassword(String password) {
+        return this.password.equals(password);
+    }
+    
     public String getRole() {
         return role;
     }

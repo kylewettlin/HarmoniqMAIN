@@ -6,10 +6,11 @@ module com.harmoniqscrum {
     requires java.desktop;
     
     // JFugue modules
-    requires transitive jfugue;
+    requires jfugue;
     
-    exports com.harmoniqscrum;
     exports com.harmoniqscrum.model;
-
-    opens com.harmoniqscrum to javafx.fxml;
+    exports com.harmoniqscrum.model.view;
+    
+    opens com.harmoniqscrum.model to javafx.fxml;
+    opens com.harmoniqscrum.model.view to javafx.fxml;
 } 

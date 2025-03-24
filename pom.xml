@@ -72,7 +72,7 @@
                     <execution>
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>com.harmoniqscrum.App</mainClass>
+                            <mainClass>com.harmoniqscrum.model.HarmoniqFACADE</mainClass>
                         </configuration>
                     </execution>
                 </executions>

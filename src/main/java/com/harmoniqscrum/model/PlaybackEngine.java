@@ -69,4 +69,15 @@ public class PlaybackEngine {
     public void shutdown(){
         // Shutdown playback implementation
     }
+    
+    /**
+     * Play a song
+     * 
+     * @param song The song to play
+     */
+    public void play(Song song){
+        this.song = song;
+        // Implement song playback logic
+        System.out.println("Playing: " + song.getTitle());
+    }
 }
