@@ -5,7 +5,8 @@ module com.harmoniqscrum {
     requires json.simple;
     requires java.desktop;
     
-    // JFugue is not a module, it will be loaded as automatic module
+    // JFugue modules
+    requires jfugue;
     
     exports com.harmoniqscrum;
     exports com.harmoniqscrum.model;
