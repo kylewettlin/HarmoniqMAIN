@@ -65,4 +65,8 @@ public class PlaybackEngine {
     public void pause(){
         // Pause playback implementation
     }
+
+    public void shutdown(){
+        // Shutdown playback implementation
+    }
 }

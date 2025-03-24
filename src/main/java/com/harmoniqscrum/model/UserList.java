@@ -7,7 +7,7 @@ public class UserList {
     private ArrayList<User> users;
 
     private UserList() {
-        this.users = new ArrayList<>();
+        this.users = DataLoader.getUsers();
     }
 
     public static UserList getInstance() {
@@ -27,5 +27,39 @@ public class UserList {
 
     public ArrayList<User> getUsers() {
         return users;
+    }
+    
+    public boolean haveUser(String username) {
+        for(User user : users) {
+            if(user.getUsername().equals(username)) {
+                return true;
+            }
+        }
+        
+        return false;
+    }
+    
+    public User getUser(String username) {
+        for(User user : users) {
+            if(user.getUsername().equals(username)) {
+                return user;
+            }
+        }
+        
+        return null;
+    }
+    
+    public boolean addUser(String firstName, String lastName, String username, 
+                          String email, String password, String role, 
+                          String theme, String highlightColor) {
+        if(haveUser(username)) return false;
+        
+        users.add(new User(firstName, lastName, username, email, 
+                             password, role, theme, highlightColor));
+        return true;
+    }
+    
+    public void saveUsers() {
+        DataWriter.saveUsers();
     }
 }

@@ -82,7 +82,14 @@ public class HarmoniqFACADE extends Application {
      * Load users from data storage
      */
     private void loadUsers() {
-        // Future implementation will load from Users.json
+        // Load users from UserList
+        UserList userList = UserList.getInstance();
+        ArrayList<User> userArray = userList.getUsers();
+        
+        // Populate the users map
+        for (User user : userArray) {
+            users.put(user.getUsername(), user);
+        }
     }
     
     /**

@@ -12,14 +12,14 @@ public class DataWriter extends DataConstants {
      * Saves all users to the JSON file
      */
     public static void saveUsers() {
-        Users users = Users.getInstance();
-        ArrayList<User> userList = users.getUsers();
+        UserList userList = UserList.getInstance();
+        ArrayList<User> users = userList.getUsers();
         
         JSONArray jsonUsers = new JSONArray();
         
         // Creating all the JSON objects
-        for(int i=0; i < userList.size(); i++) {
-            jsonUsers.add(getUserJSON(userList.get(i)));
+        for(int i=0; i < users.size(); i++) {
+            jsonUsers.add(getUserJSON(users.get(i)));
         }
         
         // Write JSON file
@@ -98,8 +98,8 @@ public class DataWriter extends DataConstants {
         // First load users
         ArrayList<User> users = DataLoader.getUsers();
         
-        // Initialize the Users singleton with loaded data
-        Users.getInstance();
+        // Initialize the UserList singleton with loaded data
+        UserList.getInstance();
         
         // Save users back to file
         DataWriter.saveUsers();

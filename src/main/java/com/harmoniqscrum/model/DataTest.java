@@ -4,11 +4,11 @@ public class DataTest {
     public static void main(String[] args) {
         // Test loading users
         System.out.println("Loading users from JSON...");
-        Users users = Users.getInstance();
+        UserList userList = UserList.getInstance();
         
         // Display all loaded users
         System.out.println("\nLoaded Users:");
-        for (User user : users.getUsers()) {
+        for (User user : userList.getUsers()) {
             System.out.println(user);
             System.out.println("  Username: " + user.getUsername());
             System.out.println("  Role: " + user.getRole());
@@ -27,7 +27,7 @@ public class DataTest {
         
         // Adding a new test user
         System.out.println("Adding a new user...");
-        boolean success = users.addUser(
+        boolean success = userList.addUser(
             "Test", 
             "User", 
             "testuser", 
@@ -43,7 +43,7 @@ public class DataTest {
             
             // Save to file
             System.out.println("Saving all users...");
-            users.saveUsers();
+            userList.saveUsers();
             System.out.println("Users saved successfully!");
         } else {
             System.out.println("Failed to add user. Username may already exist.");
