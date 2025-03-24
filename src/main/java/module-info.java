@@ -6,7 +6,7 @@ module com.harmoniqscrum {
     requires java.desktop;
     
     // JFugue modules
-    requires jfugue;
+    requires transitive jfugue;
     
     exports com.harmoniqscrum;
     exports com.harmoniqscrum.model;
