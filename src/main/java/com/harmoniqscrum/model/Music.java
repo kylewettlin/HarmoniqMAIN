@@ -7,7 +7,17 @@ import org.jfugue.pattern.Pattern;
  * Class for basic music operations using JFugue
  */
 public class Music {
-    private static Player player = new Player();
+    private static Player player;
+    
+    static {
+        try {
+            player = new Player();
+            System.out.println("JFugue Player initialized successfully");
+        } catch (Exception e) {
+            System.err.println("Error initializing JFugue Player: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
     
     /**
      * Plays a single musical note
@@ -15,8 +25,14 @@ public class Music {
      * @param note The note to play (e.g., "C", "D", "E", etc.)
      */
     public void playNote(String note) {
-        Note n = new Note(note);
-        n.play();
+        try {
+            System.out.println("Music.playNote called with: " + note);
+            Note n = new Note(note);
+            n.play();
+        } catch (Exception e) {
+            System.err.println("Error in Music.playNote: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
     
     /**

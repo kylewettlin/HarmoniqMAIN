@@ -97,9 +97,18 @@ public class Song {
      * Play the song using JFugue
      */
     public void play() {
-        updatePattern();
-        Player player = new Player();
-        player.play(pattern);
+        try {
+            System.out.println("Song.play() called for: " + title);
+            System.out.println("Number of notes: " + notes.size());
+            updatePattern();
+            System.out.println("Pattern: " + pattern.toString());
+            Player player = new Player();
+            player.play(pattern);
+            System.out.println("Song playback completed successfully");
+        } catch (Exception e) {
+            System.err.println("Error playing song: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**

@@ -110,8 +110,16 @@ public class Note {
      * Play this note using JFugue
      */
     public void play() {
-        Player player = new Player();
-        player.play(toPattern());
+        try {
+            System.out.println("Playing note: " + pitch + octave);
+            Player player = new Player();
+            Pattern pattern = toPattern();
+            System.out.println("Pattern: " + pattern.toString());
+            player.play(pattern);
+        } catch (Exception e) {
+            System.err.println("Error playing note: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
     
     /**

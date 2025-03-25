@@ -57,9 +57,15 @@ public class SongDatabase {
         };
         
         for (String noteName : notes) {
-            marySong.addNote(new Note(noteName));
+            Note note = new Note(noteName);
+            // Set longer duration for better playability - quarter note (1.0)
+            note.setDuration(1.0);
+            // Set consistent volume
+            note.setVolume(100);
+            marySong.addNote(note);
         }
         
+        System.out.println("Added 'Mary Had a Little Lamb' with " + notes.length + " notes");
         songs.add(marySong);
     }
     

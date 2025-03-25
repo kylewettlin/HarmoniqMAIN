@@ -78,8 +78,15 @@ public class PlaybackEngine {
      */
     public void play(Song song){
         this.song = song;
-        // Implement song playback logic
         System.out.println("Playing: " + song.getTitle());
+        
+        try {
+            // Actually play the song using its own play method
+            song.play();
+        } catch (Exception e) {
+            System.err.println("Error playing song: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
     
     /**
