@@ -13,7 +13,7 @@ public abstract class DataConstants {
     protected static final String USER_EMAIL = "email";
     protected static final String USER_PASSWORD = "password";
     protected static final String USER_ROLE = "role";
-    protected static final String USER_FAV_SONGS = "favSongs";
+    protected static final String USER_FAV_SONGS = "favoriteSongs";
     protected static final String USER_SETTINGS = "userSettings";
     protected static final String USER_THEME = "theme";
     protected static final String USER_HIGHLIGHT_COLOR = "highlightColor";
@@ -24,4 +24,14 @@ public abstract class DataConstants {
     
     // Teacher-specific fields
     protected static final String USER_ASSIGNED_STUDENTS = "assignedStudents";
+
+    // Song constants
+    protected static final String SONG_FILE_NAME = "src/main/java/com/harmoniqscrum/data/json/Songs.json";
+    protected static final String SONG_ID = "songId";
+    protected static final String SONG_TITLE = "title";
+    protected static final String SONG_COMPOSER = "composer";
+    protected static final String SONG_TEMPO = "tempo";
+    protected static final String SONG_KEY_SIGNATURE = "keySignature";
+    protected static final String SONG_TIME_SIGNATURE = "timeSignature";
+    protected static final String SONG_NOTES = "notes";
 } 

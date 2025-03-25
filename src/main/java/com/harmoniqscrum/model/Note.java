@@ -2,6 +2,8 @@ package com.harmoniqscrum.model;
 
 import org.jfugue.pattern.Pattern;
 import org.jfugue.player.Player;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Represents a musical note with JFugue integration and guitar-specific functionality
@@ -25,6 +27,8 @@ public class Note {
     private static final String[] NOTES = {"A", "A#", "B", "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#"};
     private static final String[] TUNING = {"E", "B", "G", "D", "A", "E"}; // Standard guitar tuning
     private static final int[] TUNING_OCT = {2, 2, 1, 1, 1, 0}; // Octaves for each string
+    
+    private String expression;
     
     /**
      * Default constructor
@@ -124,20 +128,81 @@ public class Note {
     
     /**
      * Convert this note to a JFugue Pattern
-     * 
-     * @return A JFugue Pattern representing this note
      */
     public Pattern toPattern() {
         StringBuilder sb = new StringBuilder();
-        sb.append(pitch);
-        sb.append(octave);
-        sb.append(getDurationString());
         
-        if (volume != DEFAULT_VOLUME) {
-            sb.append(" a").append(volume);
+        // Handle rest note
+        if (pitch.equalsIgnoreCase("Rest")) {
+            sb.append("R");
+        } else {
+            // Format the pitch with proper octave
+            sb.append(formatPitch(pitch));
         }
         
+        // Add duration
+        if (duration == 0.5) {
+            sb.append("i"); // Eighth note
+        } else if (duration == 0.25) {
+            sb.append("s"); // Sixteenth note
+        } else if (duration == 2.0) {
+            sb.append("h"); // Half note
+        } else if (duration == 4.0) {
+            sb.append("w"); // Whole note
+        } else {
+            sb.append("q"); // Quarter note (default)
+        }
+        
+        // Add volume if not default
+        if (volume != DEFAULT_VOLUME) {
+            sb.append("a").append(volume);
+        }
+        
+        // Add expression if present
+        if (expression != null && !expression.isEmpty()) {
+            if (expression.equalsIgnoreCase("staccato")) {
+                sb.append("s");
+            } else if (expression.equalsIgnoreCase("legato")) {
+                sb.append("l");
+            } else if (expression.equalsIgnoreCase("accent") || 
+                       expression.equalsIgnoreCase("accented")) {
+                sb.append("acc");
+            } else if (expression.equalsIgnoreCase("forte")) {
+                sb.append("f");
+            } else if (expression.equalsIgnoreCase("pianissimo")) {
+                sb.append("pp");
+            }
+        }
+        
+        System.out.println("Created note pattern: " + sb.toString());
         return new Pattern(sb.toString());
+    }
+    
+    /**
+     * Format pitch to JFugue compatible format
+     */
+    private String formatPitch(String inputPitch) {
+        // If Rest, return R
+        if (inputPitch.equalsIgnoreCase("Rest")) {
+            return "R";
+        }
+        
+        // Extract note letter (C, D, E, etc.)
+        String note = inputPitch.substring(0, 1).toUpperCase();
+        
+        // Check for sharp or flat
+        String accidental = "";
+        if (inputPitch.length() > 1) {
+            if (inputPitch.charAt(1) == '#') {
+                accidental = "#";
+            } else if (inputPitch.charAt(1) == 'b') {
+                accidental = "b";
+            }
+        }
+        
+        // Get the octave
+        // For JFugue, middle C is C5
+        return note + accidental + octave;
     }
     
     /**
@@ -240,5 +305,13 @@ public class Note {
         if (string >= 0) {
             calculatePitchFromFret();
         }
+    }
+
+    public void setExpression(String expression) {
+        this.expression = expression;
+    }
+
+    public String getExpression() {
+        return expression;
     }
 }

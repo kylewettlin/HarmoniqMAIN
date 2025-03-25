@@ -41,32 +41,9 @@ public class SongDatabase {
      * Load songs from data storage
      */
     private void loadSongs() {
-        // Future implementation will load from Songs.json
-        
-        // Create default song for testing
-        Song marySong = new Song("Mary Had a Little Lamb", "Traditional");
-        marySong.setTempo(120);
-        
-        // Add notes to the song (E D C D E E E, etc.)
-        // Mary Had a Little Lamb melody
-        String[] notes = {
-            "E", "D", "C", "D", "E", "E", "E", 
-            "D", "D", "D", 
-            "E", "G", "G", 
-            "E", "D", "C", "D", "E", "E", "E", "E", "D", "D", "E", "D", "C"
-        };
-        
-        for (String noteName : notes) {
-            Note note = new Note(noteName);
-            // Set longer duration for better playability - quarter note (1.0)
-            note.setDuration(1.0);
-            // Set consistent volume
-            note.setVolume(100);
-            marySong.addNote(note);
-        }
-        
-        System.out.println("Added 'Mary Had a Little Lamb' with " + notes.length + " notes");
-        songs.add(marySong);
+        // Load songs from JSON file using DataLoader
+        songs = DataLoader.getSongs();
+        System.out.println("Loaded " + songs.size() + " songs from JSON file");
     }
     
     /**

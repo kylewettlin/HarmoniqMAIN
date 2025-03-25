@@ -100,4 +100,83 @@ public class DataLoader extends DataConstants {
             System.out.println(user);
         }
     }
+
+    /**
+     * Loads songs from the JSON file
+     * @return ArrayList of Song objects
+     */
+    public static ArrayList<Song> getSongs() {
+        ArrayList<Song> songs = new ArrayList<Song>();
+        
+        try {
+            FileReader reader = new FileReader(SONG_FILE_NAME);
+            JSONArray songsJSON = (JSONArray)new JSONParser().parse(reader);
+            
+            for(int i=0; i < songsJSON.size(); i++) {
+                JSONObject songJSON = (JSONObject)songsJSON.get(i);
+                
+                try {
+                    // Extract song data
+                    UUID songId = UUID.fromString((String)songJSON.get(SONG_ID));
+                    String title = (String)songJSON.get(SONG_TITLE);
+                    String composer = (String)songJSON.get(SONG_COMPOSER);
+                    int tempo = ((Long)songJSON.get(SONG_TEMPO)).intValue();
+                    String keySignature = (String)songJSON.get(SONG_KEY_SIGNATURE);
+                    
+                    // Create song object
+                    Song song = new Song(title, composer);
+                    song.setSongId(songId);
+                    song.setTempo(tempo);
+                    song.setKeySignature(keySignature);
+                    
+                    // Handle time signature
+                    JSONObject timeSignature = (JSONObject)songJSON.get(SONG_TIME_SIGNATURE);
+                    int numerator = ((Long)timeSignature.get("numerator")).intValue();
+                    int denominator = ((Long)timeSignature.get("denominator")).intValue();
+                    song.setSignature(numerator, denominator);
+                    
+                    // Handle notes
+                    JSONArray notesJSON = (JSONArray)songJSON.get(SONG_NOTES);
+                    if (notesJSON != null) {
+                        for(int j=0; j < notesJSON.size(); j++) {
+                            try {
+                                JSONObject noteJSON = (JSONObject)notesJSON.get(j);
+                                String pitch = (String)noteJSON.get("pitch");
+                                double duration = ((Number)noteJSON.get("duration")).doubleValue();
+                                int volume = ((Long)noteJSON.get("volume")).intValue();
+                                String expression = (String)noteJSON.get("expression");
+                                
+                                // Extract octave from pitch if present (e.g., "C4" -> octave 4)
+                                int octave = 5; // Default octave
+                                if (pitch.length() > 1 && Character.isDigit(pitch.charAt(pitch.length()-1))) {
+                                    octave = Character.getNumericValue(pitch.charAt(pitch.length()-1));
+                                    pitch = pitch.substring(0, pitch.length()-1);
+                                }
+                                
+                                Note note = new Note(pitch);
+                                note.setOctave(octave);
+                                note.setDuration(duration);
+                                note.setVolume(volume);
+                                note.setExpression(expression);
+                                song.addNote(note);
+                            } catch (Exception e) {
+                                System.out.println("Error loading note: " + e.getMessage());
+                            }
+                        }
+                    }
+                    
+                    songs.add(song);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Skipping song with invalid UUID: " + e.getMessage());
+                } catch (Exception e) {
+                    System.out.println("Error loading song: " + e.getMessage());
+                }
+            }
+            
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        
+        return songs;
+    }
 } 

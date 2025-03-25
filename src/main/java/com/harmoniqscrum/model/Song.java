@@ -140,20 +140,31 @@ public class Song {
         
         // Add time signature if not standard 4/4
         if (timeSignature.getNumerator() != 4 || timeSignature.getDenominator() != 4) {
-            newPattern.add("TIME:" + timeSignature.toString());
+            newPattern.add("TIME:" + timeSignature.getNumerator() + "/" + timeSignature.getDenominator());
         }
         
         // Add key signature if specified
         if (keySignature != null && !keySignature.isEmpty()) {
-            newPattern.add("KEY:" + keySignature);
+            // Strip "Minor" or "Major" for JFugue format
+            String key = keySignature.replaceAll("\\s+Minor|\\s+Major", "");
+            if (keySignature.contains("Minor")) {
+                key += "min";
+            }
+            newPattern.add("KEY:" + key);
         }
         
         // Add each note to the pattern
         for (Note note : notes) {
-            newPattern.add(note.toPattern());
+            try {
+                Pattern notePattern = note.toPattern();
+                newPattern.add(notePattern);
+            } catch (Exception e) {
+                System.out.println("Error adding note to pattern: " + e.getMessage());
+            }
         }
         
         this.pattern = newPattern;
+        System.out.println("Updated song pattern: " + pattern.toString());
     }
 
     /**

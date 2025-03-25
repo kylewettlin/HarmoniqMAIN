@@ -46,7 +46,37 @@ public class HarmoniqFACADE extends Application {
      * @param args Command line arguments
      */
     public static void main(String[] args) {
-        launch(args);
+        // Instead of launching JavaFX, directly load songs and play
+        HarmoniqFACADE facade = getInstance();
+        facade.loadAndPlaySongs();
+    }
+    
+    /**
+     * Load songs from JSON and play the first one
+     */
+    public void loadAndPlaySongs() {
+        System.out.println("\nLoading songs from JSON...");
+        
+        // Get the song database instance (which loads songs via DataLoader)
+        SongDatabase songDb = SongDatabase.getInstance();
+        
+        // Print available songs
+        System.out.println("\nAvailable songs:");
+        if (songDb.getSongs().isEmpty()) {
+            System.out.println("No songs were loaded from the database.");
+            return;
+        }
+        
+        for (Song song : songDb.getSongs()) {
+            System.out.println("- " + song.getTitle() + " by " + song.getComposer());
+        }
+        
+        // Get first song
+        Song firstSong = songDb.getSongs().get(1);
+        
+        // Play the song
+        System.out.println("\nPlaying: " + firstSong.getTitle() + " by " + firstSong.getComposer());
+        playbackEngine.play(firstSong);
     }
     
     /**
@@ -57,7 +87,9 @@ public class HarmoniqFACADE extends Application {
     @Override
     public void start(Stage stage) {
         instance = this;
-        view = new HarmoniqView(stage, this);
+        
+        // Skip UI initialization for now - just load and play songs
+        loadAndPlaySongs();
     }
     
     /**
@@ -166,7 +198,7 @@ public class HarmoniqFACADE extends Application {
     public Song createSong(String title, String composer, int tempo, 
                           String keySignature, int numerator, int denominator) {
         return SongDatabase.getInstance().createSong(title, composer, tempo, 
-                keySignature, numerator, denominator);
+                                                    keySignature, numerator, denominator);
     }
 
     /**

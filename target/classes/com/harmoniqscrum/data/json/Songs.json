@@ -11,7 +11,7 @@
       "denominator": 4
     },
     "notes": [
-      { "pitch": "D5", "duration": 0.5, "volume": 85, "expression": "staccato" },
+      { "pitch": "D3", "duration": 0.5, "volume": 85, "expression": "staccato" },
       { "pitch": "D6", "duration": 0.5, "volume": 85, "expression": "staccato" },
       { "pitch": "B5", "duration": 0.5, "volume": 85, "expression": "staccato" },
       { "pitch": "D6", "duration": 0.5, "volume": 85, "expression": "staccato" },
