@@ -59,6 +59,21 @@ public class UserList {
         return true;
     }
     
+    /**
+     * Authenticate a user by username and password
+     * 
+     * @param username Username to check
+     * @param password Password to validate
+     * @return The authenticated User or null if authentication fails
+     */
+    public User authenticateUser(String username, String password) {
+        User user = getUser(username);
+        if (user != null && user.checkPassword(password)) {
+            return user;
+        }
+        return null;
+    }
+    
     public void saveUsers() {
         DataWriter.saveUsers();
     }

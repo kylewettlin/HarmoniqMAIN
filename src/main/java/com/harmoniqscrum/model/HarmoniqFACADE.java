@@ -17,9 +17,7 @@ import com.harmoniqscrum.model.view.HarmoniqView;
 public class HarmoniqFACADE extends Application {
     
     private static HarmoniqFACADE instance;
-    private Map<String, User> users;
     private User currentUser;
-    private List<Song> songs;
     private PlaybackEngine playbackEngine;
     private HarmoniqView view;
 
@@ -27,13 +25,7 @@ public class HarmoniqFACADE extends Application {
      * Constructor
      */
     public HarmoniqFACADE() {
-        users = new HashMap<>();
-        songs = new ArrayList<>();
         playbackEngine = new PlaybackEngine();
-        
-        // Initialize data
-        loadUsers();
-        loadSongs();
     }
 
     /**
@@ -79,63 +71,20 @@ public class HarmoniqFACADE extends Application {
     }
     
     /**
-     * Load users from data storage
-     */
-    private void loadUsers() {
-        // Load users from UserList
-        UserList userList = UserList.getInstance();
-        ArrayList<User> userArray = userList.getUsers();
-        
-        // Populate the users map
-        for (User user : userArray) {
-            users.put(user.getUsername(), user);
-        }
-    }
-    
-    /**
-     * Load songs from data storage
-     */
-    private void loadSongs() {
-        // Future implementation will load from Songs.json
-        
-        // Create default song for testing
-        Song marySong = new Song("Mary Had a Little Lamb", "Traditional");
-        marySong.setTempo(120);
-        
-        // Add notes to the song (E D C D E E E, etc.)
-        // Mary Had a Little Lamb melody
-        String[] notes = {
-            "E", "D", "C", "D", "E", "E", "E", 
-            "D", "D", "D", 
-            "E", "G", "G", 
-            "E", "D", "C", "D", "E", "E", "E", "E", "D", "D", "E", "D", "C"
-        };
-        
-        for (String noteName : notes) {
-            marySong.addNote(new Note(noteName));
-        }
-        
-        songs.add(marySong);
-    }
-    
-    /**
      * Play a song by title
      * 
      * @param title The title of the song to play
      */
     public void playSong(String title) {
-        for (Song song : songs) {
-            if (song.getTitle().equals(title)) {
-                playbackEngine.play(song);
-                if (view != null) {
-                    view.updatePlaybackStatus(true);
-                }
-                return;
+        boolean success = playbackEngine.playSongByTitle(title);
+        if (success) {
+            if (view != null) {
+                view.updatePlaybackStatus(true);
             }
-        }
-        
-        if (view != null) {
-            view.showError("Song not found: " + title);
+        } else {
+            if (view != null) {
+                view.showError("Song not found: " + title);
+            }
         }
     }
     
@@ -147,8 +96,10 @@ public class HarmoniqFACADE extends Application {
      * @return The logged in user or null if login failed
      */
     public User login(String username, String password) {
-        User user = users.get(username);
-        if (user != null && user.checkPassword(password)) {
+        UserList userList = UserList.getInstance();
+        User user = userList.authenticateUser(username, password);
+        
+        if (user != null) {
             currentUser = user;
             return user;
         }
@@ -162,16 +113,7 @@ public class HarmoniqFACADE extends Application {
      * @return List of matching songs
      */
     public List<Song> searchSongs(String query) {
-        List<Song> results = new ArrayList<>();
-        
-        for (Song song : songs) {
-            if (song.getTitle().toLowerCase().contains(query.toLowerCase()) ||
-                song.getComposer().toLowerCase().contains(query.toLowerCase())) {
-                results.add(song);
-            }
-        }
-        
-        return results;
+        return SongDatabase.getInstance().searchSongs(query);
     }
     
     /**
@@ -180,18 +122,7 @@ public class HarmoniqFACADE extends Application {
      * @param song The song to save
      */
     public void saveSong(Song song) {
-        // Check if song already exists
-        for (int i = 0; i < songs.size(); i++) {
-            if (songs.get(i).getTitle().equals(song.getTitle())) {
-                songs.set(i, song); // Replace existing
-                return;
-            }
-        }
-        
-        // Add new song
-        songs.add(song);
-        
-        // Future implementation will save to Songs.json
+        SongDatabase.getInstance().saveSong(song);
     }
     
     /**
@@ -200,9 +131,7 @@ public class HarmoniqFACADE extends Application {
      * @param song The song to delete
      */
     public void deleteSong(Song song) {
-        songs.removeIf(s -> s.getTitle().equals(song.getTitle()));
-        
-        // Future implementation will update Songs.json
+        SongDatabase.getInstance().deleteSong(song);
     }
     
     /**
@@ -236,11 +165,8 @@ public class HarmoniqFACADE extends Application {
      */
     public Song createSong(String title, String composer, int tempo, 
                           String keySignature, int numerator, int denominator) {
-        Song song = new Song(title, composer);
-        song.setTempo(tempo);
-        // Set other properties as needed
-        saveSong(song);
-        return song;
+        return SongDatabase.getInstance().createSong(title, composer, tempo, 
+                keySignature, numerator, denominator);
     }
 
     /**
@@ -249,7 +175,7 @@ public class HarmoniqFACADE extends Application {
      * @param composition The composition to create
      */
     public void createComposition(Composition composition) {
-        // Implementation to be added
+        Music.createComposition(composition);
     }
 
     /**
@@ -259,7 +185,10 @@ public class HarmoniqFACADE extends Application {
      * @param student The student taking the lesson
      */
     public void createLesson(Lesson lesson, Student student) {
-        // Implementation to be added
+        if (currentUser != null && "teacher".equals(currentUser.getRole())) {
+            Teacher teacher = (Teacher) currentUser;
+            teacher.createAndAssignLesson(lesson, student);
+        }
     }
 
     /**
@@ -269,8 +198,10 @@ public class HarmoniqFACADE extends Application {
      * @return List of lessons for the user
      */
     public List<Lesson> getLessonForUser(User user) {
-        // Implementation to be added
-        return new ArrayList<>();  // Return empty list for now
+        if (user instanceof Student) {
+            return ((Student) user).getAllLessons();
+        }
+        return new ArrayList<>();  // Return empty list for non-student users
     }
 
     /**
@@ -286,18 +217,7 @@ public class HarmoniqFACADE extends Application {
      */
     public void createSong(String title, String composer, String genre, int tempo, 
     String keySignature, int numerator, int denominator) {
-        Song song = new Song(title, composer);
-        song.setTempo(tempo);
-        
-        // Add genre to the song's genres list
-        List<String> genres = new ArrayList<>();
-        genres.add(genre);
-        song.setGenres(genres);
-        
-        // Set other properties
-        song.setKeySignature(keySignature);
-        song.setSignature(numerator, denominator);
-        
-        saveSong(song);
+        SongDatabase.getInstance().createSong(title, composer, genre, tempo, 
+                keySignature, numerator, denominator);
     }
 }

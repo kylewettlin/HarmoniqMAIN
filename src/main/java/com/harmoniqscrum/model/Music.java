@@ -68,4 +68,15 @@ public class Music {
         
         player.play(scale.toString());
     }
+    
+    /**
+     * Creates and saves a new composition
+     * 
+     * @param composition The composition to create and save
+     */
+    public static void createComposition(Composition composition) {
+        // Future implementation will handle the actual creation logic
+        // For now, just save the composition
+        composition.save();
+    }
 } 

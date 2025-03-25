@@ -39,4 +39,17 @@ public class Teacher extends User {
     public void provideFeedback(Song song, String feedback) {
         // Implementation for providing feedback on a song
     }
+    
+    /**
+     * Creates a new lesson and assigns it to a student
+     * 
+     * @param lesson The lesson to create
+     * @param student The student taking the lesson
+     */
+    public void createAndAssignLesson(Lesson lesson, Student student) {
+        if (assignedStudents.contains(student)) {
+            student.getAssignedLessons().add(lesson);
+            // Future implementation could save to Lessons.json
+        }
+    }
 }

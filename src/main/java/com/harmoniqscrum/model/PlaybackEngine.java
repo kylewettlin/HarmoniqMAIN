@@ -1,6 +1,7 @@
 package com.harmoniqscrum.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PlaybackEngine {
     private int speed;
@@ -79,5 +80,25 @@ public class PlaybackEngine {
         this.song = song;
         // Implement song playback logic
         System.out.println("Playing: " + song.getTitle());
+    }
+    
+    /**
+     * Play a song by title
+     * 
+     * @param title The title of the song to play
+     * @return true if song was found and played, false otherwise
+     */
+    public boolean playSongByTitle(String title) {
+        SongDatabase songDb = SongDatabase.getInstance();
+        List<Song> songs = songDb.getSongs();
+        
+        for (Song song : songs) {
+            if (song.getTitle().equals(title)) {
+                play(song);
+                return true;
+            }
+        }
+        
+        return false;
     }
 }

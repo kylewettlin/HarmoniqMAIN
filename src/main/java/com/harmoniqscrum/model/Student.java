@@ -1,6 +1,7 @@
 package com.harmoniqscrum.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class Student extends User {
     private ArrayList<Lesson> completedLessons;
@@ -51,5 +52,17 @@ public class Student extends User {
     
     public void setGrade(int grade) {
         super.setGrade(grade);
+    }
+    
+    /**
+     * Gets all lessons for the student
+     * 
+     * @return List containing both assigned and completed lessons
+     */
+    public List<Lesson> getAllLessons() {
+        List<Lesson> allLessons = new ArrayList<>();
+        allLessons.addAll(assignedLessons);
+        allLessons.addAll(completedLessons);
+        return allLessons;
     }
 }

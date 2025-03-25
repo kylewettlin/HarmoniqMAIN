@@ -25,7 +25,7 @@ public class HarmoniqView {
         var label = new Label("Welcome to Harmoniq!");
         
         Button playButton = new Button("Play Mary Had a Little Lamb");
-        playButton.setOnAction(e -> facade.playSong("Mary Had a Little Lamb"));
+        playButton.setOnAction(e -> playSong("Mary Had a Little Lamb"));
         
         var root = new VBox(10, label, playButton);
         root.setStyle("-fx-padding: 20px;");
@@ -34,6 +34,14 @@ public class HarmoniqView {
         stage.setScene(scene);
         stage.setTitle("Harmoniq Music Player");
         stage.show();
+    }
+    
+    /**
+     * Request to play a song
+     * @param songTitle The title of the song to play
+     */
+    private void playSong(String songTitle) {
+        facade.playSong(songTitle);
     }
     
     /**
