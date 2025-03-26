@@ -1,14 +1,12 @@
 package com.harmoniqscrum.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+
+import com.harmoniqscrum.model.view.HarmoniqView;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-
-import com.harmoniqscrum.model.view.HarmoniqView;
 
 /**
  * Main facade class for the Harmoniq application.
@@ -127,15 +125,8 @@ public class HarmoniqFACADE extends Application {
      * @param password Password
      * @return The logged in user or null if login failed
      */
-    public User login(String username, String password) {
-        UserList userList = UserList.getInstance();
-        User user = userList.authenticateUser(username, password);
-        
-        if (user != null) {
-            currentUser = user;
-            return user;
-        }
-        return null;
+    public User login(String name, String password) {
+        return UserList.getInstance().authenticateUser(name, password);
     }
     
     /**

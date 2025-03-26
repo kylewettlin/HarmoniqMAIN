@@ -5,6 +5,7 @@ import java.util.ArrayList;
 public class UserList {
     private static UserList Instance;
     private ArrayList<User> users;
+    private User currentUser;
 
     private UserList() {
         this.users = DataLoader.getUsers();
@@ -67,12 +68,24 @@ public class UserList {
      * @return The authenticated User or null if authentication fails
      */
     public User authenticateUser(String username, String password) {
-        User user = getUser(username);
-        if (user != null && user.checkPassword(password)) {
-            return user;
+        for (User user : users) {
+            if (user.getUsername().equals(username) && user.getPassword().equals(password)) {
+                currentUser = user; // Save current session
+                return user;
+            }
         }
         return null;
     }
+
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
+    public void clearUsers() {
+        users.clear();
+        currentUser = null; // optional: also clear session
+    }
+    
     
     public void saveUsers() {
         DataWriter.saveUsers();
