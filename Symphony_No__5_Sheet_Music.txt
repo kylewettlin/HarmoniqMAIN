@@ -1,0 +1,60 @@
+==============================================
+Symphony No. 5
+Composed by: Beethoven
+Key: C Minor
+Time: 2/4
+Tempo: 90 BPM
+==============================================
+
+Notes:
+
+Measure 1:
+  T90 (quarter)
+  TIME:2/4 (quarter)
+
+Measure 2:
+  KEY:Cm (eighth)
+  E4 (eighth)
+
+Measure 3:
+  E4 (eighth)
+  E4 (eighth)
+
+Measure 4:
+  C3 (half)
+  R4 (eighth)
+
+Measure 5:
+  D4 (eighth)
+  D4 (eighth)
+
+Measure 6:
+  D4 (eighth)
+  B3 (whole)
+
+Measure 7:
+  R6 (eighth)
+  E4 (eighth)
+
+Measure 8:
+  E4 (eighth)
+  E4 (eighth)
+
+Measure 9:
+  C3 (eighth)
+  F4 (eighth)
+
+Measure 10:
+  F4 (eighth)
+  F4 (eighth)
+
+Measure 11:
+  E3 (eighth)
+  C5 (eighth)
+
+Measure 12:
+  C5 (eighth)
+  C5 (eighth)
+
+Measure 13:
+  A4 (half)

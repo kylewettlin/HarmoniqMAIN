@@ -4,64 +4,64 @@
             {
                 "duration": 0.5,
                 "volume": 85,
+                "octave": 4,
+                "expression": "forte",
+                "pitch": "E"
+            },
+            {
+                "duration": 0.5,
+                "volume": 85,
+                "octave": 4,
+                "expression": "forte",
+                "pitch": "E"
+            },
+            {
+                "duration": 0.5,
+                "volume": 85,
+                "octave": 4,
+                "expression": "forte",
+                "pitch": "E"
+            },
+            {
+                "duration": 2.0,
+                "volume": 85,
                 "octave": 3,
-                "expression": "staccato",
-                "pitch": "D"
+                "expression": "forte",
+                "pitch": "C"
             },
             {
                 "duration": 0.5,
                 "volume": 85,
-                "octave": 6,
+                "octave": 4,
                 "expression": "staccato",
-                "pitch": "D"
+                "pitch": "R"
             },
             {
                 "duration": 0.5,
                 "volume": 85,
-                "octave": 5,
-                "expression": "staccato",
-                "pitch": "B"
-            },
-            {
-                "duration": 0.5,
-                "volume": 85,
-                "octave": 6,
-                "expression": "staccato",
-                "pitch": "D"
-            },
-            {
-                "duration": 0.5,
-                "volume": 85,
-                "octave": 5,
-                "expression": "staccato",
-                "pitch": "A"
-            },
-            {
-                "duration": 0.5,
-                "volume": 85,
-                "octave": 6,
-                "expression": "staccato",
+                "octave": 4,
+                "expression": "forte",
                 "pitch": "D"
             },
             {
                 "duration": 0.5,
                 "volume": 83,
-                "octave": 5,
-                "expression": "staccato",
-                "pitch": "G"
-            },
-            {
-                "duration": 0.5,
-                "volume": 83,
-                "octave": 6,
-                "expression": "staccato",
+                "octave": 4,
+                "expression": "forte",
                 "pitch": "D"
             },
             {
                 "duration": 0.5,
                 "volume": 83,
-                "octave": 5,
-                "expression": "staccato",
+                "octave": 4,
+                "expression": "forte",
+                "pitch": "D"
+            },
+            {
+                "duration": 4.0,
+                "volume": 83,
+                "octave": 3,
+                "expression": "forte",
                 "pitch": "B"
             },
             {
@@ -69,65 +69,107 @@
                 "volume": 83,
                 "octave": 6,
                 "expression": "staccato",
-                "pitch": "D"
+                "pitch": "R"
             },
             {
                 "duration": 0.5,
-                "volume": 83,
-                "octave": 5,
-                "expression": "staccato",
-                "pitch": "A"
-            },
-            {
-                "duration": 0.5,
-                "volume": 83,
-                "octave": 6,
-                "expression": "staccato",
-                "pitch": "D"
-            },
-            {
-                "duration": 1.0,
-                "volume": 80,
-                "octave": 5,
-                "expression": "legato",
-                "pitch": "D"
-            },
-            {
-                "duration": 1.0,
-                "volume": 80,
-                "octave": 5,
+                "volume": 85,
+                "octave": 4,
                 "expression": "legato",
                 "pitch": "E"
             },
             {
-                "duration": 1.0,
-                "volume": 80,
-                "octave": 5,
-                "expression": "crescendo",
-                "pitch": "G"
+                "duration": 0.5,
+                "volume": 85,
+                "octave": 4,
+                "expression": "legato",
+                "pitch": "E"
             },
             {
-                "duration": 1.0,
+                "duration": 0.5,
+                "volume": 85,
+                "octave": 4,
+                "expression": "legato",
+                "pitch": "E"
+            },
+            {
+                "duration": 0.5,
+                "volume": 80,
+                "octave": 3,
+                "expression": "legato",
+                "pitch": "C"
+            },
+            {
+                "duration": 0.5,
+                "volume": 80,
+                "octave": 4,
+                "expression": "legato",
+                "pitch": "F"
+            },
+            {
+                "duration": 0.5,
+                "volume": 80,
+                "octave": 4,
+                "expression": "legato",
+                "pitch": "F"
+            },
+            {
+                "duration": 0.5,
+                "volume": 80,
+                "octave": 4,
+                "expression": "legato",
+                "pitch": "F"
+            },
+            {
+                "duration": 0.5,
+                "volume": 80,
+                "octave": 3,
+                "expression": "legato",
+                "pitch": "E"
+            },
+            {
+                "duration": 0.5,
                 "volume": 80,
                 "octave": 5,
                 "expression": "legato",
-                "pitch": "F#"
+                "pitch": "C"
+            },
+            {
+                "duration": 0.5,
+                "volume": 80,
+                "octave": 5,
+                "expression": "legato",
+                "pitch": "C"
+            },
+            {
+                "duration": 0.5,
+                "volume": 80,
+                "octave": 5,
+                "expression": "legato",
+                "pitch": "C"
+            },
+            {
+                "duration": 2.0,
+                "volume": 80,
+                "octave": 4,
+                "expression": "legato",
+                "pitch": "A"
             }
         ],
-        "composer": "Guns N' Roses",
+        "composer": "Beethoven",
         "genres": [
             
         ],
         "rating": 0.0,
-        "tempo": 120,
-        "keySignature": "E Major",
-        "title": "Sweet Child O' Mine",
+        "tempo": 90,
+        "keySignature": "C Minor",
+        "title": "Symphony No. 5",
         "songId": "a79067ee-506f-4b65-9c9b-6a4a09eacb8e",
         "lyrics": [
             
         ],
         "timeSignature": {
-            "numerator": 4,
+            "numerator": 2,
             "denominator": 4
         }
     },
@@ -405,8 +447,84 @@
         "rating": 0.0,
         "tempo": 90,
         "keySignature": "C Major",
-        "title": "A horses journey 1743020890468",
-        "songId": "521158d8-82e9-483f-bb86-31decb54a8b5",
+        "title": "A horses journey 1743025115302",
+        "songId": "5d8dfaf0-f4bc-4d7e-a50a-b9bbf550619f",
+        "lyrics": [
+            
+        ],
+        "timeSignature": {
+            "numerator": 4,
+            "denominator": 4
+        }
+    },
+    {
+        "notes": [
+            {
+                "duration": 1.0,
+                "volume": 100,
+                "octave": 5,
+                "expression": null,
+                "pitch": "C"
+            },
+            {
+                "duration": 1.0,
+                "volume": 100,
+                "octave": 5,
+                "expression": null,
+                "pitch": "E"
+            },
+            {
+                "duration": 1.0,
+                "volume": 100,
+                "octave": 5,
+                "expression": null,
+                "pitch": "G"
+            },
+            {
+                "duration": 1.0,
+                "volume": 100,
+                "octave": 6,
+                "expression": null,
+                "pitch": "C"
+            },
+            {
+                "duration": 1.0,
+                "volume": 100,
+                "octave": 5,
+                "expression": null,
+                "pitch": "A"
+            },
+            {
+                "duration": 1.0,
+                "volume": 100,
+                "octave": 5,
+                "expression": null,
+                "pitch": "F"
+            },
+            {
+                "duration": 1.0,
+                "volume": 100,
+                "octave": 5,
+                "expression": null,
+                "pitch": "D"
+            },
+            {
+                "duration": 1.0,
+                "volume": 100,
+                "octave": 5,
+                "expression": null,
+                "pitch": "A"
+            }
+        ],
+        "composer": "Fellicia Fredrickson",
+        "genres": [
+            "Classical"
+        ],
+        "rating": 0.0,
+        "tempo": 90,
+        "keySignature": "C Major",
+        "title": "A horses journey 1743025691560",
+        "songId": "c9eed54b-e441-4039-81a3-8801a0c95776",
         "lyrics": [
             
         ],
