@@ -2,9 +2,9 @@ package com.harmoniqscrum.model;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.jfugue.pattern.Pattern;
 import org.jfugue.player.Player;
-import org.jfugue.theory.Chord;
 import org.jfugue.theory.ChordProgression;
 
 /**
@@ -53,6 +53,21 @@ public class Chords {
         this.duration = duration;
         this.volume = volume;
     }
+
+    /**
+     * Note collection constructor
+     * 
+     * @param notes
+     */
+    public Chords(List<Note> notes) {
+        this.notes = notes;
+    }
+
+    public Chords(List<Note> notes, double duration, int volume) {
+        this.notes = notes;
+        this.duration = duration;
+        this.volume = volume;
+    }
     
     /**
      * Play this chord using JFugue
@@ -60,6 +75,11 @@ public class Chords {
     public void play() {
         Player player = new Player();
         player.play(toPattern());
+    }
+
+    public void playNotes() {
+        Player player = new Player();
+        player.play(toPatternNotes());
     }
     
     /**
@@ -83,6 +103,21 @@ public class Chords {
             sb.append(" a").append(volume);
         }
         
+        return new Pattern(sb.toString());
+    }
+
+    /**
+     * convert this collection of notes to a JFugue Pattern
+     * @return
+     */
+    public Pattern toPatternNotes() {
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0; i<notes.size(); i++){
+            sb.append(notes.get(i).getPitch()).append(notes.get(i).getOctave());
+            if(i<notes.size()-1){
+                sb.append("+");
+            }
+        }
         return new Pattern(sb.toString());
     }
     

@@ -2,8 +2,6 @@ package com.harmoniqscrum.model;
 
 import org.jfugue.pattern.Pattern;
 import org.jfugue.player.Player;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Represents a musical note with JFugue integration and guitar-specific functionality

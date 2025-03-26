@@ -1,10 +1,9 @@
 package com.harmoniqscrum.model;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.harmoniqscrum.model.view.HarmoniqView;
 

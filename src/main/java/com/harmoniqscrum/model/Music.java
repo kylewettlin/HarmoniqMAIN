@@ -1,7 +1,9 @@
 package com.harmoniqscrum.model;
 
-import org.jfugue.player.Player;
+import java.util.List;
+
 import org.jfugue.pattern.Pattern;
+import org.jfugue.player.Player;
 
 /**
  * Class for basic music operations using JFugue
@@ -62,6 +64,11 @@ public class Music {
     public static void playChord(String root, String quality) {
         Chords chord = new Chords(root, quality);
         chord.play();
+    }
+
+    public static void playChordNotes(List<Note> notes) {
+        Chords chord = new Chords(notes);
+        chord.playNotes();
     }
     
     /**
