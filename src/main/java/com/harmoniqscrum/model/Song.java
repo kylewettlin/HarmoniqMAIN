@@ -102,9 +102,34 @@ public class Song {
             System.out.println("Song.play() called for: " + title);
             System.out.println("Number of notes: " + notes.size());
             updatePattern();
-            System.out.println("Pattern: " + pattern.toString());
+            
+            // Create a temporary pattern with settings for playback
+            Pattern playbackPattern = new Pattern();
+            
+            // Add tempo
+            playbackPattern.add("T" + tempo);
+            
+            // Add time signature if not standard 4/4
+            if (timeSignature.getNumerator() != 4 || timeSignature.getDenominator() != 4) {
+                playbackPattern.add("TIME:" + timeSignature.getNumerator() + "/" + timeSignature.getDenominator());
+            }
+            
+            // Add key signature if specified
+            if (keySignature != null && !keySignature.isEmpty()) {
+                // Strip "Minor" or "Major" for JFugue format
+                String key = keySignature.replaceAll("\\s+Minor|\\s+Major", "");
+                if (keySignature.contains("Minor")) {
+                    key += "min";
+                }
+                playbackPattern.add("KEY:" + key);
+            }
+            
+            // Add the notes pattern
+            playbackPattern.add(pattern);
+            
+            System.out.println("Pattern: " + playbackPattern.toString());
             Player player = new Player();
-            player.play(pattern);
+            player.play(playbackPattern);
             System.out.println("Song playback completed successfully");
         } catch (Exception e) {
             System.err.println("Error playing song: " + e.getMessage());
@@ -136,24 +161,7 @@ public class Song {
     private void updatePattern() {
         Pattern newPattern = new Pattern();
         
-        // Add tempo
-        newPattern.add("T" + tempo);
-        
-        // Add time signature if not standard 4/4
-        if (timeSignature.getNumerator() != 4 || timeSignature.getDenominator() != 4) {
-            newPattern.add("TIME:" + timeSignature.getNumerator() + "/" + timeSignature.getDenominator());
-        }
-        
-        // Add key signature if specified
-        if (keySignature != null && !keySignature.isEmpty()) {
-            // Strip "Minor" or "Major" for JFugue format
-            String key = keySignature.replaceAll("\\s+Minor|\\s+Major", "");
-            if (keySignature.contains("Minor")) {
-                key += "min";
-            }
-            newPattern.add("KEY:" + key);
-        }
-        
+        // Only include the notes in the pattern for sheet music display
         // Add each note to the pattern
         for (Note note : notes) {
             try {
