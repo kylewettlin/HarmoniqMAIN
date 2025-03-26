@@ -380,5 +380,81 @@
             "numerator": 4,
             "denominator": 4
         }
+    },
+    {
+        "notes": [
+            {
+                "duration": 1.0,
+                "volume": 100,
+                "octave": 5,
+                "expression": null,
+                "pitch": "C"
+            },
+            {
+                "duration": 1.0,
+                "volume": 100,
+                "octave": 5,
+                "expression": null,
+                "pitch": "E"
+            },
+            {
+                "duration": 1.0,
+                "volume": 100,
+                "octave": 5,
+                "expression": null,
+                "pitch": "G"
+            },
+            {
+                "duration": 1.0,
+                "volume": 100,
+                "octave": 6,
+                "expression": null,
+                "pitch": "C"
+            },
+            {
+                "duration": 1.0,
+                "volume": 100,
+                "octave": 5,
+                "expression": null,
+                "pitch": "A"
+            },
+            {
+                "duration": 1.0,
+                "volume": 100,
+                "octave": 5,
+                "expression": null,
+                "pitch": "F"
+            },
+            {
+                "duration": 1.0,
+                "volume": 100,
+                "octave": 5,
+                "expression": null,
+                "pitch": "D"
+            },
+            {
+                "duration": 1.0,
+                "volume": 100,
+                "octave": 5,
+                "expression": null,
+                "pitch": "A"
+            }
+        ],
+        "composer": "Fellicia Fredrickson",
+        "genres": [
+            "Classical"
+        ],
+        "rating": 0.0,
+        "tempo": 90,
+        "keySignature": "C Major",
+        "title": "A horses journey 1743030563053",
+        "songId": "2aab2511-1edb-4d74-9edd-fcde69c0d7a1",
+        "lyrics": [
+            
+        ],
+        "timeSignature": {
+            "numerator": 4,
+            "denominator": 4
+        }
     }
 ]

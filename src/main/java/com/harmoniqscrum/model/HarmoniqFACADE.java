@@ -51,32 +51,24 @@ public class HarmoniqFACADE extends Application {
         facade.runScenarios();
     }
     
-    /**
-     * Run all the required scenarios
-     */
+
     public void runScenarios() {
-        System.out.println("\n============ HARMONIQ DEMO SCENARIOS ============\n");
         
-        // Run Scenario 1: Create an account and Login
-        runAccountCreationLoginScenario();
+        // Scenario 1 Account Creation and Login
+        //Scenario1();
         
-        // Run Scenario 2: Playing a song
-        runPlayingSongScenario();
+        // Scenario 2 Playing a Song
+        //Scenario2();
         
-        // Run Scenario 3: Making a song
-        runSongCreationScenario();
+        // Scenario 3 Making a Song
+        Scenario3();
         
-        System.out.println("\n============ END OF DEMO ============\n");
     }
     
-    /**
-     * Run the account creation and login scenario
-     */
-    private void runAccountCreationLoginScenario() {
+
+    private void Scenario1() {
         System.out.println("\n---------- SCENARIO 1: CREATE ACCOUNT AND LOGIN ----------\n");
         
-        // Show that Fred is not in users.json
-        System.out.println("Checking if Fred is in the users.json file:");
         UserList userList = UserList.getInstance();
         User fred = userList.getUser("ffred");
         if (fred == null) {
@@ -87,20 +79,7 @@ public class HarmoniqFACADE extends Application {
             userList.saveUsers();
         }
         
-        // Show that Fellicia is in the users.json file
-        System.out.println("\nChecking if Fellicia is in the users.json file:");
-        User fellicia = userList.getUser("ffredrickson");
-        if (fellicia == null) {
-            System.out.println("Fellicia is not in the users.json file. Creating her account for the demo.");
-            userList.addUser("Fellicia", "Fredrickson", "ffredrickson", "fellicia@example.com", 
-                            "password123", "student", "dark", "blue");
-            userList.saveUsers();
-            System.out.println("Created Fellicia's account.");
-        } else {
-            System.out.println("Fellicia is already in the users.json file with username: " + fellicia.getUsername());
-        }
-        
-        // Fred attempts to create an account with the same username
+        // Fred attempts to create an account with the same username as Fellicia
         System.out.println("\nFred attempts to create an account with username 'ffredrickson':");
         boolean accountCreated = userList.addUser("Fred", "Fredrickson", "ffredrickson", 
                                                  "fred@example.com", "pass456", "student", "light", "green");
@@ -144,7 +123,7 @@ public class HarmoniqFACADE extends Application {
     /**
      * Run the playing song scenario
      */
-    private void runPlayingSongScenario() {
+    private void Scenario2() {
         System.out.println("\n---------- SCENARIO 2: PLAYING A SONG ----------\n");
         
         // Ensure Fred is still logged in
@@ -205,7 +184,7 @@ public class HarmoniqFACADE extends Application {
     /**
      * Run the song creation scenario
      */
-    private void runSongCreationScenario() {
+    private void Scenario3() {
         System.out.println("\n---------- SCENARIO 3: MAKING A SONG ----------\n");
         
         // Fred logs out
