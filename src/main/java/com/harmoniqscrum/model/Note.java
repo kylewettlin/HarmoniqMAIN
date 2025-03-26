@@ -96,7 +96,7 @@ public class Note {
         }
         
         // Calculate the resulting note and octave
-        int noteIndex = startIndex;
+        int noteIndex = startIndex-1;
         for (int i = 0; i < fret + 1; i++) {
             noteIndex++;
             if (noteIndex == NOTES.length) {
