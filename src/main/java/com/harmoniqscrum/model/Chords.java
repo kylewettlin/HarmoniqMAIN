@@ -113,7 +113,7 @@ public class Chords {
     public Pattern toPatternNotes() {
         StringBuilder sb = new StringBuilder();
         for(int i = 0; i<notes.size(); i++){
-            sb.append(notes.get(i).getPitch()).append(notes.get(i).getOctave());
+            sb.append(notes.get(i).toPattern());
             if(i<notes.size()-1){
                 sb.append("+");
             }
