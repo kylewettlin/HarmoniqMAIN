@@ -126,7 +126,10 @@
         "lyrics": [
             
         ],
-        "timeSignature": "4\/4"
+        "timeSignature": {
+            "numerator": 4,
+            "denominator": 4
+        }
     },
     {
         "notes": [
@@ -227,7 +230,10 @@
         "lyrics": [
             
         ],
-        "timeSignature": "4\/4"
+        "timeSignature": {
+            "numerator": 4,
+            "denominator": 4
+        }
     },
     {
         "notes": [
@@ -328,7 +334,86 @@
         "lyrics": [
             
         ],
-        "timeSignature": "4\/4"
+        "timeSignature": {
+            "numerator": 4,
+            "denominator": 4
+        }
+    },
+    {
+        "notes": [
+            {
+                "duration": 1.0,
+                "volume": 100,
+                "octave": 5,
+                "expression": null,
+                "pitch": "C"
+            },
+            {
+                "duration": 1.0,
+                "volume": 100,
+                "octave": 5,
+                "expression": null,
+                "pitch": "E"
+            },
+            {
+                "duration": 1.0,
+                "volume": 100,
+                "octave": 5,
+                "expression": null,
+                "pitch": "G"
+            },
+            {
+                "duration": 1.0,
+                "volume": 100,
+                "octave": 6,
+                "expression": null,
+                "pitch": "C"
+            },
+            {
+                "duration": 1.0,
+                "volume": 100,
+                "octave": 5,
+                "expression": null,
+                "pitch": "A"
+            },
+            {
+                "duration": 1.0,
+                "volume": 100,
+                "octave": 5,
+                "expression": null,
+                "pitch": "F"
+            },
+            {
+                "duration": 1.0,
+                "volume": 100,
+                "octave": 5,
+                "expression": null,
+                "pitch": "D"
+            },
+            {
+                "duration": 1.0,
+                "volume": 100,
+                "octave": 5,
+                "expression": null,
+                "pitch": "A"
+            }
+        ],
+        "composer": "Fellicia Fredrickson",
+        "genres": [
+            
+        ],
+        "rating": 0.0,
+        "tempo": 90,
+        "keySignature": "C Major",
+        "title": "A horses journey 1743020890468",
+        "songId": "521158d8-82e9-483f-bb86-31decb54a8b5",
+        "lyrics": [
+            
+        ],
+        "timeSignature": {
+            "numerator": 4,
+            "denominator": 4
+        }
     },
     {
         "notes": [
@@ -396,11 +481,14 @@
         "rating": 0.0,
         "tempo": 90,
         "keySignature": "C Major",
-        "title": "A horses journey 1743020890468",
-        "songId": "521158d8-82e9-483f-bb86-31decb54a8b5",
+        "title": "A horses journey 1743024515373",
+        "songId": "5eb799fb-7726-42a5-93e0-76c75d9626ac",
         "lyrics": [
             
         ],
-        "timeSignature": "4\/4"
+        "timeSignature": {
+            "numerator": 4,
+            "denominator": 4
+        }
     }
 ]

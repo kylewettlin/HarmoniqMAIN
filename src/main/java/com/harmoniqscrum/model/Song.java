@@ -180,7 +180,12 @@ public class Song {
         json.put("lyrics", lyrics);
         json.put("rating", rating);
         json.put("keySignature", keySignature);
-        json.put("timeSignature", timeSignature.toString());
+        
+        // Create timeSignature as a JSONObject instead of a string
+        JSONObject timeSignatureJson = new JSONObject();
+        timeSignatureJson.put("numerator", timeSignature.getNumerator());
+        timeSignatureJson.put("denominator", timeSignature.getDenominator());
+        json.put("timeSignature", timeSignatureJson);
         
         // Add notes information
         JSONArray notesArray = new JSONArray();
@@ -227,11 +232,23 @@ public class Song {
             this.keySignature = (String) json.get("keySignature");
         }
         if (json.containsKey("timeSignature")) {
-            String[] parts = ((String) json.get("timeSignature")).split("/");
-            this.timeSignature = new TimeSignature(
-                Integer.parseInt(parts[0]),
-                Integer.parseInt(parts[1])
-            );
+            // Handle both object and string formats for backward compatibility
+            Object timeSignatureValue = json.get("timeSignature");
+            if (timeSignatureValue instanceof JSONObject) {
+                // New format - JSON object with numerator and denominator
+                JSONObject timeSignatureJson = (JSONObject) timeSignatureValue;
+                this.timeSignature = new TimeSignature(
+                    ((Long) timeSignatureJson.get("numerator")).intValue(),
+                    ((Long) timeSignatureJson.get("denominator")).intValue()
+                );
+            } else if (timeSignatureValue instanceof String) {
+                // Old format - string like "4/4"
+                String[] parts = ((String) timeSignatureValue).split("/");
+                this.timeSignature = new TimeSignature(
+                    Integer.parseInt(parts[0]),
+                    Integer.parseInt(parts[1])
+                );
+            }
         }
         
         // Load notes from JSON
