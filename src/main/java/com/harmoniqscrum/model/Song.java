@@ -6,6 +6,7 @@ import java.util.List;
 import org.jfugue.pattern.Pattern;
 import org.jfugue.player.Player;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONArray;
 
 /**
  * Represents a musical song with JFugue integration
@@ -164,7 +165,6 @@ public class Song {
         }
         
         this.pattern = newPattern;
-        System.out.println("Updated song pattern: " + pattern.toString());
     }
 
     /**
@@ -181,6 +181,20 @@ public class Song {
         json.put("rating", rating);
         json.put("keySignature", keySignature);
         json.put("timeSignature", timeSignature.toString());
+        
+        // Add notes information
+        JSONArray notesArray = new JSONArray();
+        for (Note note : notes) {
+            JSONObject noteJson = new JSONObject();
+            noteJson.put("pitch", note.getPitch());
+            noteJson.put("duration", note.getDuration());
+            noteJson.put("volume", note.getVolume());
+            noteJson.put("octave", note.getOctave());
+            noteJson.put("expression", note.getExpression());
+            notesArray.add(noteJson);
+        }
+        json.put("notes", notesArray);
+        
         return json;
     }
 
@@ -218,6 +232,34 @@ public class Song {
                 Integer.parseInt(parts[0]),
                 Integer.parseInt(parts[1])
             );
+        }
+        
+        // Load notes from JSON
+        if (json.containsKey("notes")) {
+            JSONArray notesArray = (JSONArray) json.get("notes");
+            this.notes.clear();
+            
+            for (Object noteObj : notesArray) {
+                JSONObject noteJson = (JSONObject) noteObj;
+                String pitch = (String) noteJson.get("pitch");
+                double duration = ((Number) noteJson.get("duration")).doubleValue();
+                int volume = ((Long) noteJson.get("volume")).intValue();
+                int octave = ((Long) noteJson.get("octave")).intValue();
+                String expression = (String) noteJson.get("expression");
+                
+                Note note = new Note(pitch);
+                note.setDuration(duration);
+                note.setVolume(volume);
+                note.setOctave(octave);
+                if (expression != null) {
+                    note.setExpression(expression);
+                }
+                
+                this.notes.add(note);
+            }
+            
+            // Update the pattern with the loaded notes
+            updatePattern();
         }
     }
 

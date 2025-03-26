@@ -146,9 +146,15 @@ public class DataLoader extends DataConstants {
                                 int volume = ((Long)noteJSON.get("volume")).intValue();
                                 String expression = (String)noteJSON.get("expression");
                                 
-                                // Extract octave from pitch if present (e.g., "C4" -> octave 4)
+                                // Set default octave if not present in JSON
                                 int octave = 5; // Default octave
-                                if (pitch.length() > 1 && Character.isDigit(pitch.charAt(pitch.length()-1))) {
+                                
+                                // Use octave from JSON if available
+                                if (noteJSON.containsKey("octave")) {
+                                    octave = ((Long)noteJSON.get("octave")).intValue();
+                                } 
+                                // Otherwise extract it from pitch if present (e.g., "C4" -> octave 4)
+                                else if (pitch.length() > 1 && Character.isDigit(pitch.charAt(pitch.length()-1))) {
                                     octave = Character.getNumericValue(pitch.charAt(pitch.length()-1));
                                     pitch = pitch.substring(0, pitch.length()-1);
                                 }

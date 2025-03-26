@@ -3,8 +3,10 @@ package com.harmoniqscrum.model;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 
 public class DataWriter extends DataConstants {
     
@@ -22,9 +24,10 @@ public class DataWriter extends DataConstants {
             jsonUsers.add(getUserJSON(users.get(i)));
         }
         
-        // Write JSON file
+        // Write JSON file with pretty formatting
         try (FileWriter file = new FileWriter(USER_FILE_NAME)) {
-            file.write(jsonUsers.toJSONString());
+            String prettyJson = formatJsonString(jsonUsers.toJSONString());
+            file.write(prettyJson);
             file.flush();
         } catch (IOException e) {
             e.printStackTrace();
@@ -89,6 +92,100 @@ public class DataWriter extends DataConstants {
         }
         
         return userDetails;
+    }
+    
+    /**
+     * Saves all songs to the JSON file
+     * 
+     * @param songs List of songs to save
+     */
+    public static void saveSongs(List<Song> songs) {
+        JSONArray jsonSongs = new JSONArray();
+        
+        // Creating all the JSON objects
+        for (Song song : songs) {
+            jsonSongs.add(song.toJSON());
+        }
+        
+        // Write JSON file with pretty formatting
+        try (FileWriter file = new FileWriter(SONG_FILE_NAME)) {
+            String prettyJson = formatJsonString(jsonSongs.toJSONString());
+            file.write(prettyJson);
+            file.flush();
+            System.out.println("Saved " + songs.size() + " songs to JSON file");
+        } catch (IOException e) {
+            System.err.println("Error saving songs to JSON: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    /**
+     * Format a JSON string with proper indentation and line breaks
+     * 
+     * @param jsonString The compact JSON string
+     * @return A formatted, pretty-printed JSON string
+     */
+    private static String formatJsonString(String jsonString) {
+        StringBuilder sb = new StringBuilder();
+        int indentLevel = 0;
+        boolean inQuotes = false;
+        char previousChar = 0;
+        
+        // Loop through the string character by character
+        for (char c : jsonString.toCharArray()) {
+            if (c == '"' && previousChar != '\\') {
+                inQuotes = !inQuotes;
+            }
+            
+            if (!inQuotes) {
+                // Format based on the current character if not in quotes
+                switch (c) {
+                    case '{':
+                    case '[':
+                        sb.append(c);
+                        sb.append('\n');
+                        indentLevel++;
+                        addIndentation(sb, indentLevel);
+                        break;
+                    case ',':
+                        sb.append(c);
+                        sb.append('\n');
+                        addIndentation(sb, indentLevel);
+                        break;
+                    case '}':
+                    case ']':
+                        sb.append('\n');
+                        indentLevel--;
+                        addIndentation(sb, indentLevel);
+                        sb.append(c);
+                        break;
+                    case ':':
+                        sb.append(c).append(' ');
+                        break;
+                    default:
+                        sb.append(c);
+                }
+            } else {
+                // If in quotes, just append the character
+                sb.append(c);
+            }
+            
+            previousChar = c;
+        }
+        
+        return sb.toString();
+    }
+    
+    /**
+     * Add indentation spaces to a StringBuilder
+     * 
+     * @param sb StringBuilder to append to
+     * @param indentLevel Number of indentation levels
+     */
+    private static void addIndentation(StringBuilder sb, int indentLevel) {
+        for (int i = 0; i < indentLevel; i++) {
+            sb.append("    "); // 4 spaces per indent level
+        }
     }
 
     /**

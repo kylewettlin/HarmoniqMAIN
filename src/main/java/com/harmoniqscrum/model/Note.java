@@ -174,7 +174,6 @@ public class Note {
             }
         }
         
-        System.out.println("Created note pattern: " + sb.toString());
         return new Pattern(sb.toString());
     }
     

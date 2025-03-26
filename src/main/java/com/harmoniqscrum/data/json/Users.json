@@ -1,43 +1,88 @@
 [
     {
-        "userId":"9bba704b-a86b-4795-a513-afc08baf9d46",
-        "firstName":"Alice",
-        "lastName":"Johnson",
-        "username":"alicej",
-        "email":"alice@example.com",
-        "password":"secure123",
-        "role":"student",
-        "favSongs":["s1","s2"],
-        "highlightColor":"#3498db",
-        "completedLessons":["l1"],
-        "grade":10,
-        "theme":"dark"
-        
+        "firstName": "Alice",
+        "lastName": "Johnson",
+        "highlightColor": "#3498db",
+        "password": "secure123",
+        "role": "student",
+        "completedLessons": [
+            "l1"
+        ],
+        "grade": 10,
+        "theme": "dark",
+        "userId": "9bba704b-a86b-4795-a513-afc08baf9d46",
+        "email": "alice@example.com",
+        "username": "alicej",
+        "favoriteSongs": [
+            
+        ]
     },
     {
-        "userId":"9fbf9aeb-0a8d-4fc2-b632-725a4b3fedd6",
-        "firstName":"Bob",
-        "lastName":"Smith",
-        "username":"bobtheteacher",
-        "email":"bob@example.com",
-        "password":"teach456",
-        "role":"teacher",
-        "favSongs":["s3"],
-        "highlightColor":"#e74c3c",
-        "assignedStudents":["u1"],
-        "theme":"light"
+        "firstName": "Bob",
+        "lastName": "Smith",
+        "highlightColor": "#e74c3c",
+        "password": "teach456",
+        "assignedStudents": [
+            "u1"
+        ],
+        "role": "teacher",
+        "theme": "light",
+        "userId": "9fbf9aeb-0a8d-4fc2-b632-725a4b3fedd6",
+        "email": "bob@example.com",
+        "username": "bobtheteacher",
+        "favoriteSongs": [
+            
+        ]
     },
     {
-        "userId":"89cd05e4-566e-4afd-9802-b8728a00bce9",
-        "firstName":"Test",
-        "lastName":"User",
-        "username":"testuser",
-        "email":"test@example.com",
-        "password":"password123",
-        "role":"student",
-        "favSongs":[],
-        "highlightColor":"#FF5733",
-        "completedLessons":[],
-        "theme":"dark"
+        "firstName": "Test",
+        "lastName": "User",
+        "highlightColor": "#FF5733",
+        "password": "password123",
+        "role": "student",
+        "completedLessons": [
+            
+        ],
+        "theme": "dark",
+        "userId": "89cd05e4-566e-4afd-9802-b8728a00bce9",
+        "email": "test@example.com",
+        "username": "testuser",
+        "favoriteSongs": [
+            
+        ]
+    },
+    {
+        "firstName": "Fellicia",
+        "lastName": "Fredrickson",
+        "highlightColor": "blue",
+        "password": "password123",
+        "role": "student",
+        "completedLessons": [
+            
+        ],
+        "theme": "dark",
+        "userId": "19d621ff-0b08-49d7-9907-660cffdbe74a",
+        "email": "fellicia@example.com",
+        "username": "ffredrickson",
+        "favoriteSongs": [
+            
+        ]
+    },
+    {
+        "firstName": "Fred",
+        "lastName": "Fredrickson",
+        "highlightColor": "green",
+        "password": "pass456",
+        "role": "student",
+        "completedLessons": [
+            
+        ],
+        "theme": "light",
+        "userId": "0cfca8bc-8828-4478-b6af-e600a5470bb2",
+        "email": "fred@example.com",
+        "username": "ffred",
+        "favoriteSongs": [
+            
+        ]
     }
 ]
