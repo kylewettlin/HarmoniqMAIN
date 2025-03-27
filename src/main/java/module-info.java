@@ -2,6 +2,7 @@ module com.harmoniqscrum {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.media;
+    requires junit;
     requires json.simple;
     requires java.desktop;
     
