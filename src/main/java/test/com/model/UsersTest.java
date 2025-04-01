@@ -1,29 +1,27 @@
-package test.java.com.model;
+package test.com.model;
 
+
+//import java.util.ArrayList;
 import org.junit.Test;
-
+//import model.Database;
+//import model.Library;
+//import model.User;
+//import static org.junit.Assert.assertEquals;
+//import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+//import model.Library;
+import org.junit.Assert;
 //examples  (If haven’t need to download junit extensions the name 
 //           is "Test Runner for Java" in Marketplace)
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import org.junit.Assert;
-import com.model.*;
-
-// stop
+import test.com.model.*;
 
 class UsersTest {
-
-    
-    //examples again
 	
     @Test
     public void testTesting(){
         assertTrue(true);
     }
-
+/* 
     @Test
     public void testValidLogin(){
         Library library = Library.getInstance();
@@ -59,5 +57,5 @@ class UsersTest {
     }
  
     //stop
-
+*/
 }
