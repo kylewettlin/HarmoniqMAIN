@@ -2,7 +2,11 @@
 Test set: com.harmoniqscrum.model.UserListTest
 -------------------------------------------------------------------------------
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.045 s -- in com.harmoniqscrum.model.UserListTest
+=======
+Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.045 s -- in com.harmoniqscrum.model.UserListTest
+>>>>>>> Stashed changes
 =======
 Tests run: 11, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.045 s -- in com.harmoniqscrum.model.UserListTest
 >>>>>>> Stashed changes
