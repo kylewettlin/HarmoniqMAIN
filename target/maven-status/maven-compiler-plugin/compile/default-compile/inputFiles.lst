@@ -3,6 +3,7 @@
 /Users/kylewettlin/Documents/GitHub/HarmoniqSCRUM/src/main/java/com/harmoniqscrum/model/User.java
 /Users/kylewettlin/Documents/GitHub/HarmoniqSCRUM/src/main/java/com/harmoniqscrum/model/Staff.java
 /Users/kylewettlin/Documents/GitHub/HarmoniqSCRUM/src/main/java/module-info.java
+/Users/kylewettlin/Documents/GitHub/HarmoniqSCRUM/src/main/java/com/harmoniqscrum/model/SongPlayer.java
 /Users/kylewettlin/Documents/GitHub/HarmoniqSCRUM/src/main/java/com/harmoniqscrum/model/Student.java
 /Users/kylewettlin/Documents/GitHub/HarmoniqSCRUM/src/main/java/com/harmoniqscrum/model/Music.java
 /Users/kylewettlin/Documents/GitHub/HarmoniqSCRUM/src/main/java/com/harmoniqscrum/model/UserList.java
@@ -19,4 +20,5 @@
 /Users/kylewettlin/Documents/GitHub/HarmoniqSCRUM/src/main/java/com/harmoniqscrum/model/DataTest.java
 /Users/kylewettlin/Documents/GitHub/HarmoniqSCRUM/src/main/java/com/harmoniqscrum/model/SongDatabase.java
 /Users/kylewettlin/Documents/GitHub/HarmoniqSCRUM/src/main/java/com/harmoniqscrum/model/PlaybackEngine.java
+/Users/kylewettlin/Documents/GitHub/HarmoniqSCRUM/src/main/java/com/harmoniqscrum/model/SongGenre.java
 /Users/kylewettlin/Documents/GitHub/HarmoniqSCRUM/src/main/java/com/harmoniqscrum/model/Song.java
