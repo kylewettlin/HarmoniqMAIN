@@ -1,4 +1,4 @@
-package com.harmoniqscrum.test;
+package com.harmoniqscrum.model;
 
 import com.harmoniqscrum.model.User;
 import com.harmoniqscrum.model.UserList;
