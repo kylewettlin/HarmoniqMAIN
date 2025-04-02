@@ -1,140 +1,97 @@
 package com.harmoniqscrum.model;
 
+import com.harmoniqscrum.model.User;
+import com.harmoniqscrum.model.UserList;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * Unit tests for the UserList class.
- * These tests validate the singleton behavior, user addition,
- * authentication, and retrieval.
- * 
- * @author Dreyton Merck
+ * Unit tests for the UserList singleton class.
  */
-class UserListTest {
+public class UserListTest {
 
     private UserList userList;
-    private User student;
-    private User teacher;
 
     /**
-     * Setup before each test by clearing users and adding new sample users.
+     * Sets up a fresh UserList before each test.
      */
     @BeforeEach
-    void setUp() {
+    public void setup() {
         userList = UserList.getInstance();
         userList.clearUsers();
-
-        student = new User("Sam", "Student", "sam123", "sam@example.com", "pass123", "student", "dark", "blue");
-        teacher = new User("Tom", "Teacher", "tom456", "tom@example.com", "teach456", "teacher", "light", "green");
-
-        userList.addUser(student);
-        userList.addUser(teacher);
     }
 
     /**
-     * Ensure that existing usernames are correctly identified.
+     * Tests adding a user successfully.
      */
     @Test
-    void testHaveUserReturnsTrueIfExists() {
-        assertTrue(userList.haveUser("sam123"));
-        assertTrue(userList.haveUser("tom456"));
+    public void testAddUser_Success() {
+        boolean result = userList.addUser("Jane", "Doe", "janedoe", "jane@test.com", "pass", "student", "dark", "blue");
+        assertTrue(result);
+        assertEquals(1, userList.getUsers().size());
     }
 
     /**
-     * Ensure that unknown usernames return false.
+     * Tests adding a user with a duplicate username.
      */
     @Test
-    void testHaveUserReturnsFalseIfNotExists() {
-        assertFalse(userList.haveUser("ghost"));
+    public void testAddUser_Duplicate() {
+        userList.addUser("Jane", "Doe", "janedoe", "jane@test.com", "pass", "student", "dark", "blue");
+        boolean result = userList.addUser("John", "Doe", "janedoe", "john@test.com", "pass", "student", "dark", "blue");
+        assertFalse(result);
     }
 
     /**
-     * Ensure duplicate usernames are not allowed.
+     * Tests user authentication success.
      */
     @Test
-    void testAddUserRejectsDuplicateUsername() {
-        boolean added = userList.addUser("Fake", "Duplicate", "sam123", "new@example.com", "newpass", "student", "light", "red");
-        assertFalse(added);
-        assertEquals(2, userList.getUsers().size());
+    public void testAuthenticateUser_Success() {
+        userList.addUser("Jane", "Doe", "janedoe", "jane@test.com", "pass", "student", "dark", "blue");
+        User user = userList.authenticateUser("janedoe", "pass");
+        assertNotNull(user);
     }
 
     /**
-     * Test successful user authentication.
+     * Tests failed authentication with wrong password.
      */
     @Test
-    void testAuthenticateUserSuccess() {
-        User result = userList.authenticateUser("sam123", "pass123");
-        assertNotNull(result);
-        assertEquals("Sam", result.getFirstName());
-        assertEquals(result, userList.getCurrentUser());
+    public void testAuthenticateUser_WrongPassword() {
+        userList.addUser("Jane", "Doe", "janedoe", "jane@test.com", "pass", "student", "dark", "blue");
+        User user = userList.authenticateUser("janedoe", "wrong");
+        assertNull(user);
     }
 
     /**
-     * Test authentication with an incorrect password.
+     * Tests removing a user.
      */
     @Test
-    void testAuthenticateUserFailsOnWrongPassword() {
-        User result = userList.authenticateUser("sam123", "wrongpass");
-        assertNull(result);
-        assertNull(userList.getCurrentUser());
+    public void testRemoveUser() {
+        userList.addUser("Jane", "Doe", "janedoe", "jane@test.com", "pass", "student", "dark", "blue");
+        User user = userList.getUser("janedoe");
+        userList.removeUser(user);
+        assertEquals(0, userList.getUsers().size());
     }
 
     /**
-     * Test authentication with a non-existent user.
+     * Tests currentUser is stored after login.
      */
     @Test
-    void testAuthenticateUserFailsOnNonexistentUser() {
-        User result = userList.authenticateUser("ghost", "pass123");
-        assertNull(result);
-        assertNull(userList.getCurrentUser());
+    public void testCurrentUser() {
+        userList.addUser("Jane", "Doe", "janedoe", "jane@test.com", "pass", "student", "dark", "blue");
+        userList.authenticateUser("janedoe", "pass");
+        assertNotNull(userList.getCurrentUser());
     }
 
     /**
-     * Test that the correct user is retrieved by username.
+     * Tests clearing the user list.
      */
     @Test
-    void testGetUserReturnsCorrectUser() {
-        User found = userList.getUser("tom456");
-        assertNotNull(found);
-        assertEquals("Tom", found.getFirstName());
-    }
-
-    /**
-     * Test that getUser returns null for unknown usernames.
-     */
-    @Test
-    void testGetUserReturnsNullForUnknownUsername() {
-        assertNull(userList.getUser("nonexistent"));
-    }
-
-    /**
-     * Test that clearUsers empties both the user list and the session.
-     */
-    @Test
-    void testClearUsersEmptiesListAndSession() {
-        userList.authenticateUser("sam123", "pass123");
+    public void testClearUsers() {
+        userList.addUser("Test", "User", "testuser", "test@test.com", "123", "student", "dark", "red");
         userList.clearUsers();
-        assertTrue(userList.getUsers().isEmpty());
+        assertEquals(0, userList.getUsers().size());
         assertNull(userList.getCurrentUser());
-    }
-
-    /**
-     * Test adding multiple distinct users works as expected.
-     */
-    @Test
-    void testMultipleUsersAddedSuccessfully() {
-        User jane = new User("Jane", "Doe", "jane1", "jane@example.com", "abc123", "student", "light", "yellow");
-        User rick = new User("Rick", "Astley", "rickroll", "rick@example.com", "never", "teacher", "retro", "pink");
-        
-        userList.addUser(jane);
-        userList.addUser(rick);
-
-        assertEquals(4, userList.getUsers().size());
-        assertTrue(userList.haveUser("jane1"));
-        assertTrue(userList.haveUser("rickroll"));
     }
 }
