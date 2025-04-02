@@ -1,4 +1,4 @@
-package com.harmoniqscrum.model;
+package com.harmoniqscrum.test;
 
 import com.harmoniqscrum.model.User;
 import com.harmoniqscrum.model.UserList;
@@ -9,8 +9,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for the UserList singleton class.
- * 
- * @author Dreyton Merck
  */
 public class UserListTest {
 
@@ -93,29 +91,7 @@ public class UserListTest {
     public void testClearUsers() {
         userList.addUser("Test", "User", "testuser", "test@test.com", "123", "student", "dark", "red");
         userList.clearUsers();
-<<<<<<< HEAD
         assertEquals(0, userList.getUsers().size());
         assertNull(userList.getCurrentUser());
     }
-=======
-        assertTrue(userList.getUsers().isEmpty());
-        assertNull(userList.getCurrentUser());
-    }
-
-    /**
-     * Test adding multiple distinct users works as expected.
-     */
-    @Test
-    void testMultipleUsersAddedSuccessfully() {
-        User jane = new User("Jane", "Doe", "jane1", "jane@example.com", "abc123", "student", "light", "yellow");
-        User rick = new User("Rick", "Astley", "rickroll", "rick@example.com", "never", "teacher", "retro", "pink");
-        
-        userList.addUser(jane);
-        userList.addUser(rick);
-
-        assertEquals(4, userList.getUsers().size());
-        assertTrue(userList.haveUser("jane1"));
-        assertTrue(userList.haveUser("rickroll"));
-    }
->>>>>>> 95480cc1ce280e082ba40ef6980d5816c18e105b
 }
