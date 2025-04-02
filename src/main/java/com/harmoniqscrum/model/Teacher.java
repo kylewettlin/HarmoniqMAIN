@@ -1,7 +1,6 @@
 package com.harmoniqscrum.model;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 public class Teacher extends User {
     private ArrayList<Student> assignedStudents;
