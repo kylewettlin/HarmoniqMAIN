@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<<<<<<< Updated upstream
 <testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.harmoniqscrum.model.UserListTest" time="0.045" tests="10" errors="0" skipped="0" failures="0">
+=======
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.harmoniqscrum.model.UserListTest" time="0.045" tests="11" errors="0" skipped="0" failures="0">
+>>>>>>> Stashed changes
   <properties>
     <property name="java.specification.version" value="23"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -12,7 +16,11 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="/opt/homebrew/Cellar/openjdk/23.0.2/libexec/openjdk.jdk/Contents/Home/lib"/>
+<<<<<<< Updated upstream
     <property name="sun.java.command" value="org.apache.maven.surefire.booter.ForkedBooter /Users/kylewettlin/Documents/GitHub/HarmoniqSCRUM/target/surefire 2025-04-02T19-27-45_053-jvmRun1 surefire-20250402192745162_1tmp surefire_0-20250402192745162_2tmp"/>
+=======
+    <property name="sun.java.command" value="org.apache.maven.surefire.booter.ForkedBooter /Users/kylewettlin/Documents/GitHub/HarmoniqSCRUM/target/surefire 2025-04-02T19-00-28_883-jvmRun1 surefire-20250402190028987_1tmp surefire_0-20250402190028987_2tmp"/>
+>>>>>>> Stashed changes
     <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="jdk.debug" value="release"/>
     <property name="test" value="UserListTest"/>
@@ -60,6 +68,7 @@
     <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.class.version" value="67.0"/>
   </properties>
+<<<<<<< Updated upstream
   <testcase name="testGetUserReturnsCorrectUser" classname="com.harmoniqscrum.model.UserListTest" time="0.031"/>
   <testcase name="testHaveUserReturnsFalseIfNotExists" classname="com.harmoniqscrum.model.UserListTest" time="0.0"/>
   <testcase name="testGetUserReturnsNullForUnknownUsername" classname="com.harmoniqscrum.model.UserListTest" time="0.001"/>
@@ -69,5 +78,17 @@
   <testcase name="testAuthenticateUserFailsOnWrongPassword" classname="com.harmoniqscrum.model.UserListTest" time="0.0"/>
   <testcase name="testMultipleUsersAddedSuccessfully" classname="com.harmoniqscrum.model.UserListTest" time="0.0"/>
   <testcase name="testAuthenticateUserFailsOnNonexistentUser" classname="com.harmoniqscrum.model.UserListTest" time="0.001"/>
+=======
+  <testcase name="testGetUserWhenExists" classname="com.harmoniqscrum.model.UserListTest" time="0.03"/>
+  <testcase name="testAuthenticateUserFailure" classname="com.harmoniqscrum.model.UserListTest" time="0.001"/>
+  <testcase name="testGetCurrentUserAfterLogin" classname="com.harmoniqscrum.model.UserListTest" time="0.0"/>
+  <testcase name="testClearUsers" classname="com.harmoniqscrum.model.UserListTest" time="0.0"/>
+  <testcase name="testAddUserWithExistingUsername" classname="com.harmoniqscrum.model.UserListTest" time="0.0"/>
+  <testcase name="testGetUserWhenNotExists" classname="com.harmoniqscrum.model.UserListTest" time="0.0"/>
+  <testcase name="testAddUserObject" classname="com.harmoniqscrum.model.UserListTest" time="0.001"/>
+  <testcase name="testHaveUserWhenNotExists" classname="com.harmoniqscrum.model.UserListTest" time="0.0"/>
+  <testcase name="testRemoveUser" classname="com.harmoniqscrum.model.UserListTest" time="0.001"/>
+  <testcase name="testHaveUserWhenExists" classname="com.harmoniqscrum.model.UserListTest" time="0.0"/>
+>>>>>>> Stashed changes
   <testcase name="testAuthenticateUserSuccess" classname="com.harmoniqscrum.model.UserListTest" time="0.0"/>
 </testsuite>
