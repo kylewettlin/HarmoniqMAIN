@@ -89,31 +89,122 @@ public class Lesson {
     public void setGenre(String genre) { this.genre = genre; }
 
     /**
-     * View the lesson content (stub for future implementation).
+     * View the lesson content by displaying all relevant information.
+     * @return A formatted string containing lesson details
      */
-    public void viewLesson(){
-        // Display lesson content
+    public String viewLesson() {
+        StringBuilder content = new StringBuilder();
+        content.append("Lesson: ").append(title).append("\n");
+        content.append("Description: ").append(description).append("\n");
+        content.append("Difficulty: ").append(difficulty).append("\n");
+        content.append("Genre: ").append(genre).append("\n");
+        content.append("Duration: ").append(durationMinutes).append(" minutes\n\n");
+        
+        content.append("Learning Objectives:\n");
+        for (String objective : objectives) {
+            content.append("- ").append(objective).append("\n");
+        }
+        
+        content.append("\nExercises:\n");
+        for (String exercise : exercises) {
+            content.append("- ").append(exercise).append("\n");
+        }
+        
+        if (!relatedSongIds.isEmpty()) {
+            content.append("\nRelated Songs:\n");
+            for (String songId : relatedSongIds) {
+                content.append("- Song ID: ").append(songId).append("\n");
+            }
+        }
+        
+        return content.toString();
     }
 
     /**
-     * Mark the lesson as completed (stub for future implementation).
+     * Mark the lesson as completed for a student.
+     * @param student The student completing the lesson
+     * @return true if the lesson was successfully marked as completed
+     * @throws IllegalArgumentException if student is null
      */
-    public void completeLesson(){
-        // Track completion
+    public boolean completeLesson(Student student) {
+        if (student == null) {
+            throw new IllegalArgumentException("Student cannot be null");
+        }
+
+        try {
+            // Check if the lesson was assigned to the student
+            if (!student.getAssignedLessons().contains(this)) {
+                return false;
+            }
+
+            // Add to student's completed lessons if not already completed
+            if (!student.getLessonObjects().contains(this)) {
+                student.completeLesson(this);
+                return true;
+            }
+            
+            return false;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
-     * Begin the lesson (stub for future implementation).
+     * Begin the lesson by initializing necessary resources and tracking.
+     * @param student The student starting the lesson
+     * @return true if the lesson was successfully started
+     * @throws IllegalArgumentException if student is null
      */
-    public void beginLesson(){
-        // Start lesson interaction
+    public boolean beginLesson(Student student) {
+        if (student == null) {
+            throw new IllegalArgumentException("Student cannot be null");
+        }
+
+        try {
+            // Verify the lesson is assigned to the student
+            if (!student.getAssignedLessons().contains(this)) {
+                return false;
+            }
+
+            // Check if lesson is already completed
+            if (student.getLessonObjects().contains(this)) {
+                return false;
+            }
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     /**
-     * Assign the lesson to a student (stub for future implementation).
+     * Assign the lesson to a student.
      * @param student The student receiving the lesson
+     * @return true if the lesson was successfully assigned
+     * @throws IllegalArgumentException if student is null
      */
-    public void assignLesson(Student student){
-        // Assign lesson logic
+    public boolean assignLesson(Student student) {
+        if (student == null) {
+            throw new IllegalArgumentException("Student cannot be null");
+        }
+
+        try {
+            // Check if lesson is already assigned
+            if (student.getAssignedLessons().contains(this)) {
+                return false;
+            }
+
+            // Add lesson to student's assigned lessons
+            student.getAssignedLessons().add(this);
+            
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return title + " (" + lessonId + ")";
     }
 }

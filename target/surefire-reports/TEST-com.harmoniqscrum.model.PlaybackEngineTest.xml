@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.harmoniqscrum.model.PlaybackEngineTest" time="0.381" tests="10" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.harmoniqscrum.model.PlaybackEngineTest" time="0.368" tests="10" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="23"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -12,7 +12,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="/opt/homebrew/Cellar/openjdk/23.0.2/libexec/openjdk.jdk/Contents/Home/lib"/>
-    <property name="sun.java.command" value="org.apache.maven.surefire.booter.ForkedBooter /Users/kylewettlin/Documents/GitHub/HarmoniqSCRUM/target/surefire 2025-04-02T18-39-35_031-jvmRun1 surefire-20250402183935150_1tmp surefire_0-20250402183935150_2tmp"/>
+    <property name="sun.java.command" value="org.apache.maven.surefire.booter.ForkedBooter /Users/kylewettlin/Documents/GitHub/HarmoniqSCRUM/target/surefire 2025-04-02T18-50-00_630-jvmRun1 surefire-20250402185000747_1tmp surefire_0-20250402185000747_2tmp"/>
     <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="jdk.debug" value="release"/>
     <property name="test" value="PlaybackEngineTest"/>
@@ -60,12 +60,12 @@
     <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.class.version" value="67.0"/>
   </properties>
-  <testcase name="testPlaySongByTitle_SongNotFound" classname="com.harmoniqscrum.model.PlaybackEngineTest" time="0.04">
+  <testcase name="testPlaySongByTitle_SongNotFound" classname="com.harmoniqscrum.model.PlaybackEngineTest" time="0.043">
     <system-out><![CDATA[Loaded 5 songs from JSON file
 ]]></system-out>
   </testcase>
   <testcase name="testSetAndGetLooping" classname="com.harmoniqscrum.model.PlaybackEngineTest" time="0.001"/>
-  <testcase name="testPlay" classname="com.harmoniqscrum.model.PlaybackEngineTest" time="0.225">
+  <testcase name="testPlay" classname="com.harmoniqscrum.model.PlaybackEngineTest" time="0.216">
     <system-out><![CDATA[Playing: Test Song
 Song.play() called for: Test Song
 Number of notes: 0
@@ -74,11 +74,11 @@ Song playback completed successfully
 ]]></system-out>
   </testcase>
   <testcase name="testSetAndGetSong" classname="com.harmoniqscrum.model.PlaybackEngineTest" time="0.001"/>
-  <testcase name="testConstructorWithSong" classname="com.harmoniqscrum.model.PlaybackEngineTest" time="0.0"/>
+  <testcase name="testConstructorWithSong" classname="com.harmoniqscrum.model.PlaybackEngineTest" time="0.001"/>
   <testcase name="testSetAndGetMetronomeSpeed" classname="com.harmoniqscrum.model.PlaybackEngineTest" time="0.0"/>
-  <testcase name="testAdjustSpeed" classname="com.harmoniqscrum.model.PlaybackEngineTest" time="0.0"/>
-  <testcase name="testLoopPlayback" classname="com.harmoniqscrum.model.PlaybackEngineTest" time="0.001"/>
-  <testcase name="testPlaySongByTitle_SongFound" classname="com.harmoniqscrum.model.PlaybackEngineTest" time="0.1">
+  <testcase name="testAdjustSpeed" classname="com.harmoniqscrum.model.PlaybackEngineTest" time="0.001"/>
+  <testcase name="testLoopPlayback" classname="com.harmoniqscrum.model.PlaybackEngineTest" time="0.0"/>
+  <testcase name="testPlaySongByTitle_SongFound" classname="com.harmoniqscrum.model.PlaybackEngineTest" time="0.092">
     <system-out><![CDATA[Playing: Known Song
 Song.play() called for: Known Song
 Number of notes: 0
@@ -86,5 +86,5 @@ Pattern: T120 KEY:C
 Song playback completed successfully
 ]]></system-out>
   </testcase>
-  <testcase name="testDefaultConstructor" classname="com.harmoniqscrum.model.PlaybackEngineTest" time="0.0"/>
+  <testcase name="testDefaultConstructor" classname="com.harmoniqscrum.model.PlaybackEngineTest" time="0.001"/>
 </testsuite>
