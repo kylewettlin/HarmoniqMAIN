@@ -12,7 +12,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="US"/>
     <property name="sun.boot.library.path" value="/opt/homebrew/Cellar/openjdk/23.0.2/libexec/openjdk.jdk/Contents/Home/lib"/>
-    <property name="sun.java.command" value="org.apache.maven.surefire.booter.ForkedBooter /Users/kylewettlin/Documents/GitHub/HarmoniqSCRUM/target/surefire 2025-04-02T19-13-16_996-jvmRun1 surefire-20250402191317106_1tmp surefire_0-20250402191317106_2tmp"/>
+    <property name="sun.java.command" value="org.apache.maven.surefire.booter.ForkedBooter /Users/kylewettlin/Documents/GitHub/HarmoniqSCRUM/target/surefire 2025-04-02T19-42-40_474-jvmRun1 surefire-20250402194240583_1tmp surefire_0-20250402194240583_2tmp"/>
     <property name="http.nonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="jdk.debug" value="release"/>
     <property name="test" value="SongDatabaseTest"/>
@@ -60,12 +60,12 @@
     <property name="socksNonProxyHosts" value="local|*.local|169.254/16|*.169.254/16"/>
     <property name="java.class.version" value="67.0"/>
   </properties>
-  <testcase name="testSaveExistingSong" classname="com.harmoniqscrum.model.SongDatabaseTest" time="0.043">
+  <testcase name="testSaveExistingSong" classname="com.harmoniqscrum.model.SongDatabaseTest" time="0.044">
     <system-out><![CDATA[Loaded 5 songs from JSON file
 ]]></system-out>
   </testcase>
-  <testcase name="testAddMultipleSongs" classname="com.harmoniqscrum.model.SongDatabaseTest" time="0.001"/>
-  <testcase name="testAddSong" classname="com.harmoniqscrum.model.SongDatabaseTest" time="0.0"/>
+  <testcase name="testAddMultipleSongs" classname="com.harmoniqscrum.model.SongDatabaseTest" time="0.0"/>
+  <testcase name="testAddSong" classname="com.harmoniqscrum.model.SongDatabaseTest" time="0.001"/>
   <testcase name="testSearchNull" classname="com.harmoniqscrum.model.SongDatabaseTest" time="0.001">
     <error message="Cannot invoke &quot;String.toLowerCase()&quot; because &quot;query&quot; is null" type="java.lang.NullPointerException"><![CDATA[java.lang.NullPointerException: Cannot invoke "String.toLowerCase()" because "query" is null
 	at com.harmoniqscrum/com.harmoniqscrum.model.SongDatabase.searchSongs(SongDatabase.java:59)
@@ -141,13 +141,13 @@
 	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:495)
 ]]></error>
   </testcase>
-  <testcase name="testSearchSongsByComposer" classname="com.harmoniqscrum.model.SongDatabaseTest" time="0.0"/>
+  <testcase name="testSearchSongsByComposer" classname="com.harmoniqscrum.model.SongDatabaseTest" time="0.001"/>
   <testcase name="testRemoveSong" classname="com.harmoniqscrum.model.SongDatabaseTest" time="0.0"/>
   <testcase name="testCreateSong" classname="com.harmoniqscrum.model.SongDatabaseTest" time="0.0"/>
   <testcase name="testRemoveNonExistentSong" classname="com.harmoniqscrum.model.SongDatabaseTest" time="0.001"/>
-  <testcase name="testSearchCaseInsensitive" classname="com.harmoniqscrum.model.SongDatabaseTest" time="0.001"/>
+  <testcase name="testSearchCaseInsensitive" classname="com.harmoniqscrum.model.SongDatabaseTest" time="0.0"/>
   <testcase name="testDeleteSong" classname="com.harmoniqscrum.model.SongDatabaseTest" time="0.0"/>
-  <testcase name="testSearchSongsByTitle" classname="com.harmoniqscrum.model.SongDatabaseTest" time="0.0"/>
+  <testcase name="testSearchSongsByTitle" classname="com.harmoniqscrum.model.SongDatabaseTest" time="0.001"/>
   <testcase name="testSearchEmptyString" classname="com.harmoniqscrum.model.SongDatabaseTest" time="0.001">
     <failure message="Empty search string should return no results ==&gt; expected: &lt;0&gt; but was: &lt;2&gt;" type="org.opentest4j.AssertionFailedError"><![CDATA[org.opentest4j.AssertionFailedError: Empty search string should return no results ==> expected: <0> but was: <2>
 	at org.junit.jupiter.api.AssertionFailureBuilder.build(AssertionFailureBuilder.java:151)

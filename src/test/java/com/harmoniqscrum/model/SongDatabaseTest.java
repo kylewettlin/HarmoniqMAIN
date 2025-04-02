@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.ArrayList;
 
 /**
- * Unit tests for the SongDatabase class
+ * Unit tests for the SongDatabase class - Kyle Wettlin
  */
 @DisplayName("SongDatabase Tests")
 class SongDatabaseTest {

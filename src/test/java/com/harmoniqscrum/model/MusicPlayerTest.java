@@ -10,7 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
 /**
- * Unit tests for the MusicPlayer class
+ * Unit tests for the MusicPlayer class - Kyle Wettlin
  */
 @DisplayName("MusicPlayer Tests")
 class MusicPlayerTest {
