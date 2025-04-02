@@ -32,26 +32,12 @@
             <type>pom</type>
         </dependency>
 
-
+        <!-- Testing Dependencies -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.13.2</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx</artifactId>
-            <version>25-ea+10</version>
-            <type>pom</type>
-        </dependency>
-
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.13.2</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -60,7 +46,8 @@
             <version>5.9.3</version> <!-- Use latest version -->
             <scope>test</scope>
         </dependency>
-
+        
+        <!-- JavaFX Dependencies -->
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
@@ -76,11 +63,15 @@
             <artifactId>javafx-media</artifactId>
             <version>${javafx.version}</version>
         </dependency>
+
+        <!-- JSON Parsing -->
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
             <version>1.1.1</version>
         </dependency>
+
+        <!-- JFugue Library -->
         <dependency>
             <groupId>org.jfugue</groupId>
             <artifactId>jfugue</artifactId>

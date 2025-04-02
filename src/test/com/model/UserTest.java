@@ -1,6 +1,5 @@
 package test.com.model;
 
-
 //import java.util.ArrayList;
 import org.junit.Test;
 //import model.Database;
@@ -15,7 +14,7 @@ import org.junit.Assert;
 //           is "Test Runner for Java" in Marketplace)
 import test.com.model.*;
 
-class UsersTest {
+public class UserTest {
 	
     @Test
     public void testTesting(){
