@@ -2,10 +2,9 @@ module com.harmoniqscrum {
     requires javafx.controls;
     requires javafx.fxml;
     requires javafx.media;
-    requires junit;
-    requires json.simple;
     requires java.desktop;
-    
+    requires json.simple;
+    requires junit;
     // JFugue modules
     requires jfugue;
     

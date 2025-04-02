@@ -21,16 +21,17 @@ class UsersTest {
     public void testTesting(){
         assertTrue(true);
     }
-/* 
+
+/*
     @Test
     public void testValidLogin(){
         Library library = Library.getInstance();
-        library.login("asmith");
+        library.login("ffred");
         String firstName = library.getCurrentUser().getFirstName().toLowerCase();
 
-        assertEquals("amy", firstName);
+        assertEquals("Fred", firstName);
     }
-
+/*
     @Test
     public void testInValidLogin(){
         Library library = Library.getInstance();
