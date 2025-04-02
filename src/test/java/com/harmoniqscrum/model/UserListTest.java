@@ -118,7 +118,6 @@ class UserListTest {
     void testClearUsersEmptiesListAndSession() {
         userList.authenticateUser("sam123", "pass123");
         userList.clearUsers();
-
         assertTrue(userList.getUsers().isEmpty());
         assertNull(userList.getCurrentUser());
     }
@@ -128,8 +127,11 @@ class UserListTest {
      */
     @Test
     void testMultipleUsersAddedSuccessfully() {
-        userList.addUser(new User("Jane", "Doe", "jane1", "jane@example.com", "abc123", "student", "light", "yellow"));
-        userList.addUser(new User("Rick", "Astley", "rickroll", "rick@example.com", "never", "teacher", "retro", "pink"));
+        User jane = new User("Jane", "Doe", "jane1", "jane@example.com", "abc123", "student", "light", "yellow");
+        User rick = new User("Rick", "Astley", "rickroll", "rick@example.com", "never", "teacher", "retro", "pink");
+        
+        userList.addUser(jane);
+        userList.addUser(rick);
 
         assertEquals(4, userList.getUsers().size());
         assertTrue(userList.haveUser("jane1"));
