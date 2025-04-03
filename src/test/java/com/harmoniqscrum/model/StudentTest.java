@@ -1,8 +1,8 @@
 package com.harmoniqscrum.model;
 
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ public class StudentTest {
     private Lesson lesson2;
     private Lesson lesson3;
     
-    @Before
+    @BeforeEach
     public void setUp() {
         student = new Student("John", "Doe", "jdoe", "jdoe@example.com", 
                              "password", "dark", "blue");
@@ -31,13 +31,13 @@ public class StudentTest {
     
     @Test
     public void testConstructorAndBasicProperties() {
-        assertEquals("Role should be student", "student", student.getRole());
-        assertTrue("Completed lessons should start empty", student.getLessonObjects().isEmpty());
-        assertTrue("Assigned lessons should start empty", student.getAssignedLessons().isEmpty());
+        assertEquals("student", student.getRole(), "Role should be student");
+        assertTrue(student.getLessonObjects().isEmpty(), "Completed lessons should start empty");
+        assertTrue(student.getAssignedLessons().isEmpty(), "Assigned lessons should start empty");
         
         // Test grade functions
         student.setGrade(10);
-        assertEquals("Grade should be set correctly", Integer.valueOf(10), student.getStudentGrade());
+        assertEquals(Integer.valueOf(10), student.getStudentGrade(), "Grade should be set correctly");
     }
     
     @Test
@@ -48,27 +48,27 @@ public class StudentTest {
         assigned.add(lesson2);
         student.setAssignedLessons(assigned);
         
-        assertEquals("Should have 2 assigned lessons", 2, student.getAssignedLessons().size());
+        assertEquals(2, student.getAssignedLessons().size(), "Should have 2 assigned lessons");
         
         // Test completing a lesson
         student.completeLesson(lesson1);
-        assertTrue("Lesson should be marked completed", 
-                  student.getLessonObjects().contains(lesson1));
+        assertTrue(student.getLessonObjects().contains(lesson1), 
+                  "Lesson should be marked completed");
         
         // Test parent class tracking
         List<String> parentCompleted = student.getCompletedLessons();
-        assertTrue("Parent should track completed lesson", 
-                  parentCompleted.contains(lesson1.toString()));
+        assertTrue(parentCompleted.contains(lesson1.toString()), 
+                  "Parent should track completed lesson");
         
         // Test completing non-assigned lesson
         student.completeLesson(lesson3);
-        assertFalse("Non-assigned lesson should not be completed", 
-                   student.getLessonObjects().contains(lesson3));
+        assertFalse(student.getLessonObjects().contains(lesson3), 
+                   "Non-assigned lesson should not be completed");
         
         // Test getting all lessons
         List<Lesson> allLessons = student.getAllLessons();
-        assertEquals("All lessons should include both lists", 
-                    assigned.size() + 1, allLessons.size());
+        assertEquals(assigned.size() + 1, allLessons.size(), 
+                    "All lessons should include both lists");
     }
     
     @Test
@@ -81,25 +81,23 @@ public class StudentTest {
         ArrayList<Lesson> returned = student.getAssignedLessons();
         returned.add(lesson2);
         
-        assertTrue("Modifying returned list affects internal state", 
-                  student.getAssignedLessons().contains(lesson2));
+        assertTrue(student.getAssignedLessons().contains(lesson2), 
+                  "Modifying returned list affects internal state");
         
         // Test null handling
-        try {
+        assertDoesNotThrow(() -> {
             student.setAssignedLessons(null);
             student.getAssignedLessons(); // This will throw NPE if no null check in setter
             student.completeLesson(null); // This should not throw exception
-        } catch (NullPointerException e) {
-            fail("Class should handle null values gracefully");
-        }
+        }, "Class should handle null values gracefully");
         
         // Test method naming confusion
         ArrayList<Lesson> completed = new ArrayList<>();
         completed.add(lesson3);
         student.setCompletedLessons(completed);
         
-        assertEquals("getLessonObjects returns completed lessons", 
-                    completed, student.getLessonObjects());
+        assertEquals(completed, student.getLessonObjects(), 
+                    "getLessonObjects returns completed lessons");
         
         // Test duplicate entries in getAllLessons
         ArrayList<Lesson> newAssigned = new ArrayList<>();
@@ -112,6 +110,6 @@ public class StudentTest {
         for (Lesson lesson : allLessons) {
             if (lesson.equals(lesson1)) lesson1Count++;
         }
-        assertEquals("Lesson appears twice in getAllLessons", 2, lesson1Count);
+        assertEquals(2, lesson1Count, "Lesson appears twice in getAllLessons");
     }
 }
