@@ -24,9 +24,9 @@ public class StudentTest {
         student = new Student("John", "Doe", "jdoe", "jdoe@example.com", 
                              "password", "dark", "blue");
         
-        lesson1 = new Lesson("Lesson 1", "Description 1");
-        lesson2 = new Lesson("Lesson 2", "Description 2");
-        lesson3 = new Lesson("Lesson 3", "Description 3");
+        lesson1 = new Lesson("Lesson 1", "Description 1", null, null, null, null, null, 0, null);
+        lesson2 = new Lesson("Lesson 2", "Description 2", null, null, null, null, null, 0, null);
+        lesson3 = new Lesson("Lesson 3", "Description 3", null, null, null, null, null, 0, null);
     }
     
     @Test
