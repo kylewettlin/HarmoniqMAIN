@@ -6,7 +6,6 @@ module com.harmoniqscrum {
     requires json.simple;
     // JFugue modules
     requires jfugue;
-    requires org.junit.jupiter.api;
     
     exports com.harmoniqscrum.model;
     exports com.harmoniqscrum.model.view;

@@ -1,12 +1,12 @@
 package com.harmoniqscrum.model;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.List;
 import java.util.ArrayList;
- 
+
  /**
  * tests for the Staff class
  * Validates clef initialization, measure
@@ -23,58 +23,152 @@ public class StaffTest {
         staff = new Staff();
     }
 
-    
     @Test
-    @DisplayName("Default constructor initializes with treble clef and empty measures")
-    void defaultConstructor_SetsTrebleClefAndEmptyMeasures() {
+    void testDefaultConstructor() {
+        assertNotNull(staff.getMeasures());
+        assertTrue(staff.getMeasures().isEmpty());
         assertEquals("treble", staff.getClef());
+        assertEquals("4/4", staff.getTimeSignature());
+        assertEquals("C", staff.getKeySignature());
+    }
+
+    @Test
+    void testCustomConstructor() {
+        staff = new Staff("bass", "3/4", "F#");
+        assertEquals("bass", staff.getClef());
+        assertEquals("3/4", staff.getTimeSignature());
+        assertEquals("F#", staff.getKeySignature());
+        assertNotNull(staff.getMeasures());
         assertTrue(staff.getMeasures().isEmpty());
     }
 
     @Test
-    @DisplayName("Constructor with clef parameter sets clef correctly")
-    void constructorWithClef_SetsSpecifiedClef() {
-        Staff bassStaff = new Staff("bass");
-        assertEquals("bass", bassStaff.getClef());
-    }
-
-    
-    @Test
-    @DisplayName("Adding a measure increases measures list size")
-    void addMeasure_AddsToMeasuresList() {
-        staff.addMeasure(new Measure());
-        assertEquals(1, staff.getMeasures().size());
-    }
-
-    @Test
-    @DisplayName("Setting measures replaces existing list")
-    void setMeasures_ReplacesCurrentMeasures() {
-        ArrayList<Measure> newMeasures = new ArrayList<>();
-        newMeasures.add(new Measure());
-        newMeasures.add(new Measure());
+    void testAddMeasure() {
+        Measure measure = new Measure("4/4");
+        staff.addMeasure(measure);
         
-        staff.setMeasures(newMeasures);
-        assertEquals(2, staff.getMeasures().size());
-    }
-
-    
-    @Test
-    @DisplayName("Setting clef updates the staff's clef")
-    void setClef_UpdatesClefValue() {
-        staff.setClef("alto");
-        assertEquals("alto", staff.getClef());
-    }
-    
-    @Test
-    @DisplayName("Adding measure to null measures list throws exception")
-    void addMeasure_WithNullMeasuresList_ThrowsException() {
-        staff.setMeasures(null); // Force null measures list
-        assertThrows(NullPointerException.class, () -> staff.addMeasure(new Measure()));
+        assertEquals(1, staff.getMeasures().size());
+        assertEquals(measure, staff.getMeasures().get(0));
     }
 
     @Test
-    @DisplayName("Render method does not throw errors")
-    void render_DoesNotThrowErrors() {
-        assertDoesNotThrow(() -> staff.render());
+    void testAddMultipleMeasures() {
+        Measure measure1 = new Measure("4/4");
+        Measure measure2 = new Measure("4/4");
+        Measure measure3 = new Measure("4/4");
+
+        staff.addMeasure(measure1);
+        staff.addMeasure(measure2);
+        staff.addMeasure(measure3);
+
+        assertEquals(3, staff.getMeasures().size());
+        assertEquals(measure1, staff.getMeasures().get(0));
+        assertEquals(measure2, staff.getMeasures().get(1));
+        assertEquals(measure3, staff.getMeasures().get(2));
+    }
+
+    @Test
+    void testRemoveMeasure() {
+        Measure measure1 = new Measure("4/4");
+        Measure measure2 = new Measure("4/4");
+        
+        staff.addMeasure(measure1);
+        staff.addMeasure(measure2);
+        
+        staff.removeMeasure(0);
+        assertEquals(1, staff.getMeasures().size());
+        assertEquals(measure2, staff.getMeasures().get(0));
+    }
+
+    @Test
+    void testRemoveMeasureInvalidIndex() {
+        Measure measure = new Measure("4/4");
+        staff.addMeasure(measure);
+
+        staff.removeMeasure(-1); // Should not throw exception
+        staff.removeMeasure(1); // Should not throw exception
+        assertEquals(1, staff.getMeasures().size()); // Measure should still be there
+    }
+
+    @Test
+    void testSetMeasures() {
+        List<Measure> measures = new ArrayList<>();
+        measures.add(new Measure("4/4"));
+        measures.add(new Measure("4/4"));
+        measures.add(new Measure("4/4"));
+
+        staff.setMeasures(measures);
+        assertEquals(3, staff.getMeasures().size());
+        assertEquals(measures, staff.getMeasures());
+    }
+
+    @Test
+    void testSetInvalidClef() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            staff.setClef("invalid");
+        });
+    }
+
+    @Test
+    void testSetInvalidTimeSignature() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            staff.setTimeSignature("5/3");
+        });
+    }
+
+    @Test
+    void testSetInvalidKeySignature() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            staff.setKeySignature("H#");
+        });
+    }
+
+    @Test
+    void testValidClefs() {
+        String[] validClefs = {"treble", "bass", "alto", "tenor"};
+        for (String clef : validClefs) {
+            staff.setClef(clef);
+            assertEquals(clef, staff.getClef());
+        }
+    }
+
+    @Test
+    void testValidTimeSignatures() {
+        String[] validTimeSignatures = {"2/4", "3/4", "4/4", "6/8", "9/8", "12/8"};
+        for (String timeSignature : validTimeSignatures) {
+            staff.setTimeSignature(timeSignature);
+            assertEquals(timeSignature, staff.getTimeSignature());
+        }
+    }
+
+    @Test
+    void testValidKeySignatures() {
+        String[] validKeySignatures = {"C", "G", "D", "A", "E", "B", "F#", "C#",
+                                     "F", "Bb", "Eb", "Ab", "Db", "Gb", "Cb"};
+        for (String keySignature : validKeySignatures) {
+            staff.setKeySignature(keySignature);
+            assertEquals(keySignature, staff.getKeySignature());
+        }
+    }
+
+    @Test
+    void testMeasureTimeSignatureValidation() {
+        staff.setTimeSignature("3/4");
+        
+        // Adding measure with different time signature should throw exception
+        Measure measure = new Measure("4/4");
+        assertThrows(IllegalArgumentException.class, () -> {
+            staff.addMeasure(measure);
+        });
+    }
+
+    @Test
+    void testClearMeasures() {
+        staff.addMeasure(new Measure("4/4"));
+        staff.addMeasure(new Measure("4/4"));
+        staff.addMeasure(new Measure("4/4"));
+
+        staff.clearMeasures();
+        assertTrue(staff.getMeasures().isEmpty());
     }
 }
