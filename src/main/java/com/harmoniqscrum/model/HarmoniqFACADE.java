@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.harmoniqscrum.model.view.HarmoniqView;
+import com.harmoniqscrum.controller.LoginController;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
@@ -59,8 +60,15 @@ public class HarmoniqFACADE extends Application {
     public void start(Stage stage) {
         instance = this;
         
-        // Initialize the UI view
+        // Create View and Controller
         this.view = new HarmoniqView(stage, this);
+        LoginController loginController = new LoginController(this, this.view);
+        
+        // Pass controller to the view
+        this.view.setLoginController(loginController);
+        
+        // Initialize the UI (which now happens inside HarmoniqView constructor)
+        // The view's constructor already calls initializeUI(), so no need to call it here.
     }
     
     /**
