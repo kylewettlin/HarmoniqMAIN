@@ -114,6 +114,7 @@ public class UserList {
 
         users.add(new User(firstName, lastName, username, email,
                            password, role, theme, highlightColor));
+        saveUsers();
         return true;
     }
 

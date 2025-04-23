@@ -84,5 +84,22 @@
         "favoriteSongs": [
             
         ]
+    },
+    {
+        "firstName": "Kyle",
+        "lastName": "Wettlin",
+        "highlightColor": "blue",
+        "password": "admin",
+        "role": "student",
+        "completedLessons": [
+            
+        ],
+        "theme": "Light",
+        "userId": "de736edc-e18d-4611-a901-5fb41785daf9",
+        "email": "kwettlin@email.sc.edu",
+        "username": "kylewettlin",
+        "favoriteSongs": [
+            
+        ]
     }
 ]

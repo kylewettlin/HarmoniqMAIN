@@ -302,4 +302,22 @@ public class HarmoniqFACADE extends Application {
         }
         return new ArrayList<>();  // Return empty list for non-student users
     }
+
+    /**
+     * Gets the currently logged-in user.
+     *
+     * @return The current User object, or null if no user is logged in.
+     */
+    public User getCurrentUser() {
+        // Delegate to UserList to get the currently authenticated user
+        return UserList.getInstance().getCurrentUser(); 
+    }
+    
+    /**
+     * Saves the current state of all users (e.g., after preference change).
+     */
+    public void saveUserPreferences() {
+        UserList.getInstance().saveUsers();
+        System.out.println("User preferences saved.");
+    }
 }

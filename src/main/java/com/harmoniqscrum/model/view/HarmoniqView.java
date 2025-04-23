@@ -35,6 +35,16 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
+import com.harmoniqscrum.controller.CreateAccountController;
+import javafx.scene.layout.StackPane;
+import javafx.scene.control.ChoiceBox;
+import javafx.stage.Modality;
+import javafx.stage.Window;
+import com.harmoniqscrum.model.User;
+import javafx.scene.control.Separator;
 
 /**
  * Main view for the Harmoniq application.
@@ -46,10 +56,12 @@ public class HarmoniqView {
     private LoginController loginController;
     private DashboardController dashboardController;
     private StudioController studioController;
+    private CreateAccountController createAccountController;
     private Node currentlyExpandedDetails = null;
     private Node currentlyHighlightedEntry = null;
     private static final String BASE_STYLE = "-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);";
     private static final String HIGHLIGHT_STYLE = BASE_STYLE + " -fx-border-color: #003366; -fx-border-width: 1;";
+    private Stage profilePopupStage;
     
     public HarmoniqView(Stage stage, HarmoniqFACADE facade) {
         this.stage = stage;
@@ -62,36 +74,75 @@ public class HarmoniqView {
     }
     
     private void initializeUI() {
-        VBox loginRoot = createLoginLayout();
+        showLoginScreen();
+    }
+    
+    public void showLoginScreen() {
+        VBox loginContent = createLoginLayout(); // Get the content VBox
+        
+        // --- Root ScrollPane ---
+        ScrollPane rootScrollPane = new ScrollPane();
+        rootScrollPane.setContent(loginContent);
+        rootScrollPane.setFitToWidth(true);
+        rootScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        rootScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        rootScrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
 
-        var scene = new Scene(loginRoot, 600, 500);
-        stage.setScene(scene);
+        // --- Update Scene ---
+        Scene scene = stage.getScene();
+        if (scene == null) {
+            scene = new Scene(rootScrollPane, 600, 600); // Use ScrollPane as root
+            stage.setScene(scene);
+        } else {
+            scene.setRoot(rootScrollPane); // Use ScrollPane as root
+        }
         stage.setTitle("Harmoniq Login");
-        stage.show();
+        stage.setWidth(600);
+        stage.setHeight(600); 
+        stage.centerOnScreen();
+        if (!stage.isShowing()) {
+             stage.show();
+        }
     }
     
     private VBox createLoginLayout() {
+        VBox root = new VBox(20); // This is the content VBox now
+        root.setAlignment(Pos.TOP_CENTER);
+        root.setPadding(new Insets(40));
+
+        // Logo
         Image logo = new Image(getClass().getResourceAsStream("/Logo.png"));
         ImageView logoView = new ImageView(logo);
         logoView.setFitHeight(150);
         logoView.setPreserveRatio(true);
 
+        // Welcome Label
         Label welcomeLabel = new Label("Welcome back to Harmoniq");
         welcomeLabel.setStyle("-fx-font-size: 18px; -fx-text-fill: #003366;");
 
+        // Login Form Box
         VBox loginBox = new VBox(10);
         loginBox.setAlignment(Pos.CENTER_LEFT);
         loginBox.setPadding(new Insets(20));
         loginBox.setMaxWidth(300);
-        loginBox.setStyle("-fx-border-color: lightgrey; -fx-border-width: 1; -fx-border-radius: 5;");
+        loginBox.setStyle("-fx-border-color: lightgrey; -fx-border-width: 1; -fx-border-radius: 5; -fx-background-color: white;"); // Added white background
+
+        String labelStyle = "-fx-text-fill: black;"; // Style for labels
 
         Label userLabel = new Label("Username:");
+        userLabel.setStyle(labelStyle); // Explicitly set text color
         TextField userField = new TextField();
         userField.setPromptText("Please enter your username");
 
         Label passLabel = new Label("Password:");
+        passLabel.setStyle(labelStyle); // Explicitly set text color
         PasswordField passField = new PasswordField();
         passField.setPromptText("Please enter your password");
+        passField.setOnAction(e -> {
+            if (loginController != null) {
+                loginController.handleLogin(userField.getText(), passField.getText());
+            }
+        });
 
         Button loginButton = new Button("Login");
         loginButton.setStyle("-fx-background-color: #003366; -fx-text-fill: white; -fx-font-weight: bold;");
@@ -102,57 +153,78 @@ public class HarmoniqView {
             }
         });
 
-        Label createAccountLabel = new Label("Don't have an account? Create one here.");
+        Hyperlink createAccountLink = new Hyperlink("Don't have an account? Create one here.");
+        createAccountLink.setOnAction(e -> {
+            this.createAccountController = new CreateAccountController(facade, this);
+            showCreateAccountScreen(this.createAccountController);
+        });
 
         loginBox.getChildren().addAll(
             userLabel, userField,
             passLabel, passField,
             new VBox(5),
-            createAccountLabel,
+            createAccountLink,
             new VBox(10),
             loginButton
         );
 
-        VBox root = new VBox(20);
-        root.setAlignment(Pos.TOP_CENTER);
-        root.setPadding(new Insets(40));
         root.getChildren().addAll(logoView, welcomeLabel, loginBox);
-        return root;
+        return root; // Return the content VBox
     }
     
     public void showMainScreen(DashboardController controller) {
         this.dashboardController = controller;
         this.currentlyExpandedDetails = null;
         
+        // --- Main Layout (Content for ScrollPane) ---
         BorderPane mainLayout = new BorderPane();
-        mainLayout.setPadding(new Insets(10));
+        // No padding here, padding will be handled by content areas
 
-        HBox topBar = new HBox(20);
-        topBar.setAlignment(Pos.CENTER_LEFT);
-        topBar.setPadding(new Insets(10, 20, 10, 20));
-        topBar.setStyle("-fx-border-color: lightgrey; -fx-border-width: 0 0 1 0;");
+        // --- Top Area (StackPane: Logo + Navigation HBox) ---
+        StackPane topStackPane = new StackPane();
+        topStackPane.setStyle("-fx-background-color: white;"); // Or your desired background
 
-        Image logo = new Image(getClass().getResourceAsStream("/Logo.png"));
-        ImageView logoView = new ImageView(logo);
-        logoView.setFitHeight(70);
+        // Large Logo (Bottom Layer)
+        Image logoImage = new Image(getClass().getResourceAsStream("/Logo.png"));
+        ImageView logoView = new ImageView(logoImage);
+        logoView.setFitHeight(120); // Significantly larger logo
         logoView.setPreserveRatio(true);
+        StackPane.setAlignment(logoView, Pos.TOP_LEFT); // Align logo to top-left
+        // Add margin to logo if needed: StackPane.setMargin(logoView, new Insets(10)); 
 
-        Button songsButton = new Button("Songs");
+        // Navigation HBox (Top Layer)
+        HBox navHBox = new HBox(20);
+        navHBox.setAlignment(Pos.CENTER_LEFT);
+        // Adjust padding: Top pushes below logo, Left pushes right of logo
+        navHBox.setPadding(new Insets(40, 20, 10, 150)); // Example padding (adjust as needed)
+        navHBox.setStyle("-fx-border-color: lightgrey; -fx-border-width: 0 0 1 0;"); // Bottom border
+
+        Button songsButton = new Button("Songs"); songsButton.setDisable(true); // Disable on main screen
         Button lessonsButton = new Button("Lessons");
         Button studioButton = new Button("Studio");
+        // Wire up Studio Button action (moved logic here)
+         studioButton.setOnAction(e -> {
+             this.studioController = new StudioController(facade);
+             showStudioScreen(this.studioController);
+         });
+        // TODO: Add action for lessonsButton
 
-        Region spacer = new Region();
+        Region spacer = new Region(); 
         HBox.setHgrow(spacer, Priority.ALWAYS);
-
         Button profileButton = new Button("👤");
-        profileButton.setStyle("-fx-font-size: 18px;");
+        profileButton.setStyle("-fx-font-size: 18px;"); 
+        profileButton.setOnAction(e -> showProfilePopup());
+        
+        navHBox.getChildren().addAll(songsButton, lessonsButton, studioButton, spacer, profileButton);
 
-        topBar.getChildren().addAll(logoView, songsButton, lessonsButton, studioButton, spacer, profileButton);
-        mainLayout.setTop(topBar);
+        // Add logo first (bottom), then nav HBox (top)
+        topStackPane.getChildren().addAll(logoView, navHBox);
 
-        // --- Center: Search and Song List --- 
+        mainLayout.setTop(topStackPane); // Set StackPane as the top element
+
+        // --- Center: Search and Song List ScrollPane ---
         VBox centerArea = new VBox(15);
-        centerArea.setPadding(new Insets(20));
+        centerArea.setPadding(new Insets(20)); // Add padding back to center area
 
         HBox searchBar = new HBox(10);
         searchBar.setAlignment(Pos.CENTER_LEFT);
@@ -188,22 +260,24 @@ public class HarmoniqView {
         centerArea.getChildren().add(songListScrollPane);
         mainLayout.setCenter(centerArea);
 
-        // Wire up Studio Button
-        studioButton.setOnAction(e -> {
-            // Create new controller instance when navigating to studio
-            this.studioController = new StudioController(facade);
-            showStudioScreen(this.studioController); 
-        });
-
+        // --- Root ScrollPane (Contains mainLayout) ---
+        ScrollPane rootScrollPane = new ScrollPane();
+        rootScrollPane.setContent(mainLayout); 
+        rootScrollPane.setFitToWidth(true);
+        rootScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        rootScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        rootScrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
+        
+        // --- Update Scene ---
         Scene currentScene = stage.getScene();
         if (currentScene != null) {
-             currentScene.setRoot(mainLayout);
+             currentScene.setRoot(rootScrollPane); // Set ScrollPane as root
              stage.setTitle("Harmoniq - Dashboard");
              stage.setWidth(800);
              stage.setHeight(600);
              stage.centerOnScreen();
         } else {
-             Scene newScene = new Scene(mainLayout, 800, 600);
+             Scene newScene = new Scene(rootScrollPane, 800, 600); // Set ScrollPane as root
              stage.setScene(newScene);
              stage.setTitle("Harmoniq - Dashboard"); 
              stage.show();
@@ -363,33 +437,39 @@ public class HarmoniqView {
     public void showStudioScreen(StudioController controller) {
         this.studioController = controller; 
         
+        // --- Studio Layout (Content for ScrollPane) ---
         BorderPane studioLayout = new BorderPane();
-        studioLayout.setPadding(new Insets(10));
+        // No padding here, padding will be handled by content areas
 
-        // --- Top Bar (reuse from main screen logic if possible, or recreate) ---
-        // For simplicity, recreating a similar top bar here
-        HBox topBar = new HBox(20);
-        topBar.setAlignment(Pos.CENTER_LEFT);
-        topBar.setPadding(new Insets(10, 20, 10, 20));
-        topBar.setStyle("-fx-border-color: lightgrey; -fx-border-width: 0 0 1 0;"); 
+        // --- Top Area (StackPane: Logo + Navigation HBox) ---
+        StackPane topStackPane = new StackPane();
+        topStackPane.setStyle("-fx-background-color: white;"); // Match dashboard background
 
-        Image logo = new Image(getClass().getResourceAsStream("/Logo.png"));
-        ImageView logoView = new ImageView(logo);
-        logoView.setFitHeight(70); 
+        // Large Logo (Bottom Layer)
+        Image logoImage = new Image(getClass().getResourceAsStream("/Logo.png"));
+        ImageView logoView = new ImageView(logoImage);
+        logoView.setFitHeight(120); // Match dashboard logo size
         logoView.setPreserveRatio(true);
+        StackPane.setAlignment(logoView, Pos.TOP_LEFT);
 
-        // Make nav buttons switch back to dashboard or other views
+        // Navigation HBox (Top Layer)
+        HBox navHBox = new HBox(20);
+        navHBox.setAlignment(Pos.CENTER_LEFT);
+        // Use same padding as dashboard for consistency
+        navHBox.setPadding(new Insets(40, 20, 10, 150)); 
+        navHBox.setStyle("-fx-border-color: lightgrey; -fx-border-width: 0 0 1 0;"); // Bottom border
+
+        // Nav buttons
         Button songsButton = new Button("Songs");
         songsButton.setOnAction(e -> {
-            // Assuming dashboardController is still valid or recreated if needed
             if (this.dashboardController != null) {
                  showMainScreen(this.dashboardController); // Switch back
             } else {
                 System.err.println("Dashboard controller not available to switch back.");
-                // Potentially recreate dashboard controller here
+                // TODO: Could potentially recreate dashboardController if needed
             }
         });
-        Button lessonsButton = new Button("Lessons"); // Add action later
+        Button lessonsButton = new Button("Lessons"); // TODO: Add action later
         Button studioButton = new Button("Studio");
         studioButton.setDisable(true); // Disable studio button when on studio page
 
@@ -397,10 +477,16 @@ public class HarmoniqView {
         HBox.setHgrow(spacer, Priority.ALWAYS);
         Button profileButton = new Button("👤");
         profileButton.setStyle("-fx-font-size: 18px;"); 
-        topBar.getChildren().addAll(logoView, songsButton, lessonsButton, studioButton, spacer, profileButton);
-        studioLayout.setTop(topBar);
+        profileButton.setOnAction(e -> showProfilePopup());
+        
+        navHBox.getChildren().addAll(songsButton, lessonsButton, studioButton, spacer, profileButton);
+        
+        // Add logo first, then nav HBox
+        topStackPane.getChildren().addAll(logoView, navHBox);
+        
+        studioLayout.setTop(topStackPane); // Set StackPane as top
 
-        // --- Center: Song Editor Form (inside ScrollPane) ---
+        // --- Center: Form ScrollPane ---
         GridPane formGrid = new GridPane();
         formGrid.setHgap(10);
         formGrid.setVgap(15);
@@ -530,22 +616,229 @@ public class HarmoniqView {
         formScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         formScrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;"); // Make ScrollPane background transparent
 
-        studioLayout.setCenter(formScrollPane); // Set ScrollPane as the center
+        studioLayout.setCenter(formScrollPane);
+        
+        // --- Root ScrollPane ---
+        ScrollPane rootScrollPane = new ScrollPane();
+        rootScrollPane.setContent(studioLayout); // Put the BorderPane inside
+        rootScrollPane.setFitToWidth(true);
+        rootScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        rootScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        rootScrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
         
         // --- Update Scene --- 
         Scene currentScene = stage.getScene();
         if (currentScene != null) {
-            currentScene.setRoot(studioLayout);
+            currentScene.setRoot(rootScrollPane); // Set Root ScrollPane as root
             stage.setTitle("Harmoniq - Studio"); 
-            // Reset stage size potentially?
-             stage.setWidth(800);
-             stage.setHeight(700); // Increase height for studio
-             stage.centerOnScreen();
+            stage.setWidth(800);
+            stage.setHeight(700); 
+            stage.centerOnScreen();
         } else {
-            Scene newScene = new Scene(studioLayout, 800, 700);
+            Scene newScene = new Scene(rootScrollPane, 800, 700);
             stage.setScene(newScene);
             stage.setTitle("Harmoniq - Studio"); 
             stage.show();
         }
+    }
+
+    public void showCreateAccountScreen(CreateAccountController controller) {
+        this.createAccountController = controller;
+
+        // --- Content Container (holds logo and form, goes INSIDE scrollpane) ---
+        VBox pageContent = new VBox(20);
+        pageContent.setAlignment(Pos.TOP_CENTER);
+        pageContent.setPadding(new Insets(40)); // Padding for the whole content area
+
+        // Logo
+        Image logo = new Image(getClass().getResourceAsStream("/Logo.png"));
+        ImageView logoView = new ImageView(logo);
+        logoView.setFitHeight(150);
+        logoView.setPreserveRatio(true);
+        pageContent.getChildren().add(logoView); // Add logo to content VBox
+
+        // Form Box
+        VBox formBox = new VBox(10);
+        formBox.setAlignment(Pos.CENTER_LEFT);
+        formBox.setPadding(new Insets(20));
+        formBox.setMaxWidth(350);
+        formBox.setStyle("-fx-border-color: lightgrey; -fx-border-width: 1; -fx-border-radius: 5; -fx-background-color: white;"); // Added white background to form box
+        String labelStyle = "-fx-text-fill: black;";
+
+        // Username
+        Label userLabel = new Label("Username:"); userLabel.setStyle(labelStyle);
+        TextField userField = new TextField(); userField.setPromptText("Please enter your username");
+        formBox.getChildren().addAll(userLabel, userField);
+        // Email
+        Label emailLabel = new Label("Email:"); emailLabel.setStyle(labelStyle);
+        TextField emailField = new TextField(); emailField.setPromptText("Please enter your email");
+        formBox.getChildren().addAll(emailLabel, emailField);
+        // Password
+        Label passLabel = new Label("Password:"); passLabel.setStyle(labelStyle);
+        PasswordField passField = new PasswordField(); passField.setPromptText("Please enter your password");
+        formBox.getChildren().addAll(passLabel, passField);
+        // First Name
+        Label firstNameLabel = new Label("First Name:"); firstNameLabel.setStyle(labelStyle);
+        TextField firstNameField = new TextField(); firstNameField.setPromptText("Please enter your first name");
+        formBox.getChildren().addAll(firstNameLabel, firstNameField);
+        // Last Name
+        Label lastNameLabel = new Label("Last Name:"); lastNameLabel.setStyle(labelStyle);
+        TextField lastNameField = new TextField(); lastNameField.setPromptText("Please enter your last name");
+        formBox.getChildren().addAll(lastNameLabel, lastNameField);
+        // Role Selection
+        Label roleLabel = new Label("Signing up as:"); roleLabel.setStyle(labelStyle);
+        ToggleButton studentButton = new ToggleButton("Student");
+        ToggleButton teacherButton = new ToggleButton("Teacher");
+        ToggleGroup roleGroup = new ToggleGroup();
+        studentButton.setToggleGroup(roleGroup);
+        teacherButton.setToggleGroup(roleGroup);
+        studentButton.setSelected(true); 
+        HBox roleBox = new HBox(10, studentButton, teacherButton);
+        formBox.getChildren().addAll(roleLabel, roleBox);
+        // Spacer
+        formBox.getChildren().add(new VBox(15)); 
+        // Create Account Button
+        Button createButton = new Button("Create Account");
+        createButton.setStyle("-fx-background-color: #003366; -fx-text-fill: white; -fx-font-weight: bold;");
+        createButton.setMinWidth(formBox.getMaxWidth() - 40); 
+        createButton.setOnAction(e -> {
+            String selectedRole = "student"; // Default
+            if (teacherButton.isSelected()) {
+                selectedRole = "teacher";
+            }
+            if (createAccountController != null) {
+                createAccountController.handleCreateAccount(
+                    userField.getText(), 
+                    emailField.getText(), 
+                    passField.getText(), 
+                    firstNameField.getText(), 
+                    lastNameField.getText(), 
+                    selectedRole
+                );
+            }
+        });
+        formBox.getChildren().add(createButton);
+        // Back to Login Link
+        Hyperlink backLink = new Hyperlink("Back to Login");
+        backLink.setOnAction(e -> showLoginScreen());
+        HBox backLinkBox = new HBox(backLink);
+        backLinkBox.setAlignment(Pos.CENTER);
+        backLinkBox.setPadding(new Insets(10,0,0,0));
+        formBox.getChildren().add(backLinkBox);
+        // --- End of formBox population ---
+        
+        pageContent.getChildren().add(formBox); // Add formBox to the content VBox
+
+        // --- Root ScrollPane (Contains pageContent) ---
+        ScrollPane rootScrollPane = new ScrollPane();
+        rootScrollPane.setContent(pageContent); // Set the content VBox as scrollable content
+        rootScrollPane.setFitToWidth(true); // Allow content VBox to use full width for centering
+        rootScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        rootScrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
+        rootScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); // Prevent horizontal scrolling
+
+        // --- Update Scene --- 
+        Scene scene = stage.getScene();
+        if (scene == null) {
+            scene = new Scene(rootScrollPane, 600, 750); // Use ScrollPane as root
+            stage.setScene(scene);
+        } else {
+            scene.setRoot(rootScrollPane); // Set ScrollPane as the new root
+        }
+        stage.setTitle("Harmoniq - Create Account");
+        // Width/Height are set on the Stage, ScrollPane adapts
+        stage.setWidth(600); 
+        stage.setHeight(750);
+        stage.centerOnScreen();
+         if (!stage.isShowing()) {
+             stage.show();
+        }
+    }
+
+    public void showProfilePopup() {
+        User currentUser = facade.getCurrentUser();
+        if (currentUser == null) {
+            // Should not happen if profile button is only visible when logged in
+            System.err.println("Cannot show profile popup: No user logged in.");
+             Alert alert = new Alert(Alert.AlertType.WARNING);
+             alert.setTitle("Not Logged In");
+             alert.setHeaderText(null);
+             alert.setContentText("Please log in to view profile settings.");
+             alert.showAndWait();
+            return;
+        }
+
+        // Prevent opening multiple popups
+        if (profilePopupStage != null && profilePopupStage.isShowing()) {
+            profilePopupStage.toFront();
+            return;
+        }
+
+        profilePopupStage = new Stage();
+        profilePopupStage.initModality(Modality.WINDOW_MODAL); // Block interaction with main window
+        profilePopupStage.initOwner(stage); // Set owner window
+        profilePopupStage.setTitle("User Profile");
+
+        VBox popupLayout = new VBox(15);
+        popupLayout.setPadding(new Insets(20));
+        popupLayout.setAlignment(Pos.CENTER_LEFT);
+        String labelStyle = "-fx-text-fill: black;";
+
+        // Display User Info
+        Label usernameLabel = new Label("Username: " + currentUser.getUsername());
+        usernameLabel.setStyle(labelStyle);
+        Label roleLabel = new Label("Role: " + currentUser.getRole());
+        roleLabel.setStyle(labelStyle);
+
+        popupLayout.getChildren().addAll(usernameLabel, roleLabel, new Separator()); // Add a separator
+
+        // Theme Selection
+        Label themeLabel = new Label("App Theme:");
+        themeLabel.setStyle(labelStyle);
+        ChoiceBox<String> themeChoiceBox = new ChoiceBox<>(FXCollections.observableArrayList("Light", "Dark"));
+        themeChoiceBox.setValue(currentUser.getTheme() != null ? currentUser.getTheme() : "Light"); // Set current theme
+        HBox themeBox = new HBox(10, themeLabel, themeChoiceBox);
+        themeBox.setAlignment(Pos.CENTER_LEFT);
+        popupLayout.getChildren().add(themeBox);
+        
+        // TODO: Add Highlight Color Picker later if needed
+
+        // Save Button
+        Button saveButton = new Button("Save Preferences");
+        saveButton.setOnAction(e -> {
+            String selectedTheme = themeChoiceBox.getValue();
+            boolean changed = false;
+            if (!selectedTheme.equals(currentUser.getTheme())) {
+                 currentUser.setTheme(selectedTheme);
+                 changed = true;
+            }
+            // Add logic for highlight color saving here if implemented
+
+            if (changed) {
+                facade.saveUserPreferences(); // Save the updated user list
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Preferences Saved");
+                alert.setHeaderText(null);
+                alert.setContentText("Theme preference saved. It will apply on next login.");
+                alert.showAndWait();
+            }
+            profilePopupStage.close(); // Close the popup
+        });
+        
+        // Close Button
+        Button closeButton = new Button("Close");
+        closeButton.setOnAction(e -> profilePopupStage.close());
+
+        HBox buttonPane = new HBox(10, saveButton, closeButton);
+        buttonPane.setAlignment(Pos.CENTER_RIGHT);
+        buttonPane.setPadding(new Insets(20, 0, 0, 0));
+
+        popupLayout.getChildren().add(buttonPane);
+
+        Scene popupScene = new Scene(popupLayout);
+        profilePopupStage.setScene(popupScene);
+        profilePopupStage.sizeToScene(); // Adjust size
+        profilePopupStage.setResizable(false); 
+        profilePopupStage.show();
     }
 } 
