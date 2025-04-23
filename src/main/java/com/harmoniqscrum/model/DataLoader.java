@@ -128,6 +128,48 @@ public class DataLoader extends DataConstants {
                     song.setTempo(tempo);
                     song.setKeySignature(keySignature);
                     
+                    // Load rating if present
+                    if (songJSON.containsKey("rating")) {
+                         // Handle potential Long or Double from JSON parser
+                        Object ratingObj = songJSON.get("rating");
+                        if (ratingObj instanceof Number) {
+                            song.setRating(((Number) ratingObj).doubleValue());
+                        } else {
+                            System.out.println("Warning: Unexpected type for rating: " + ratingObj.getClass().getName());
+                            song.setRating(0.0); // Default if type is wrong
+                        }
+                    } else {
+                        song.setRating(0.0); // Default if key not present
+                    }
+
+                    // Load genres if present
+                    if (songJSON.containsKey("genres")) {
+                        JSONArray genresJSON = (JSONArray) songJSON.get("genres");
+                        ArrayList<String> genresList = new ArrayList<>();
+                        if (genresJSON != null) {
+                            for(int j=0; j < genresJSON.size(); j++) {
+                                genresList.add((String)genresJSON.get(j));
+                            }
+                        }
+                        song.setGenres(genresList);
+                    } else {
+                        song.setGenres(new ArrayList<>()); // Default to empty list
+                    }
+
+                    // Load lyrics if present
+                    if (songJSON.containsKey("lyrics")) {
+                         JSONArray lyricsJSON = (JSONArray) songJSON.get("lyrics");
+                        ArrayList<String> lyricsList = new ArrayList<>();
+                        if (lyricsJSON != null) {
+                            for (int j = 0; j < lyricsJSON.size(); j++) {
+                                lyricsList.add((String) lyricsJSON.get(j));
+                            }
+                        }
+                        song.setLyrics(lyricsList);
+                    } else {
+                         song.setLyrics(new ArrayList<>()); // Default to empty list
+                    }
+                    
                     // Handle time signature
                     JSONObject timeSignature = (JSONObject)songJSON.get(SONG_TIME_SIGNATURE);
                     int numerator = ((Long)timeSignature.get("numerator")).intValue();

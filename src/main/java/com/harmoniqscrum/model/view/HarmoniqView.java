@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import javafx.scene.Node;
 import javafx.scene.Cursor;
+import java.text.DecimalFormat;
 
 /**
  * Main view for the Harmoniq application.
@@ -34,6 +35,9 @@ public class HarmoniqView {
     private LoginController loginController;
     private DashboardController dashboardController;
     private Node currentlyExpandedDetails = null;
+    private Node currentlyHighlightedEntry = null;
+    private static final String BASE_STYLE = "-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);";
+    private static final String HIGHLIGHT_STYLE = BASE_STYLE + " -fx-border-color: #003366; -fx-border-width: 1;";
     
     public HarmoniqView(Stage stage, HarmoniqFACADE facade) {
         this.stage = stage;
@@ -118,7 +122,7 @@ public class HarmoniqView {
 
         Image logo = new Image(getClass().getResourceAsStream("/Logo.png"));
         ImageView logoView = new ImageView(logo);
-        logoView.setFitHeight(40);
+        logoView.setFitHeight(60);
         logoView.setPreserveRatio(true);
 
         Button songsButton = new Button("Songs");
@@ -177,9 +181,12 @@ public class HarmoniqView {
     }
 
     private VBox createSongEntry(Song song) {
+        VBox songEntryContainer = new VBox();
+        songEntryContainer.setStyle(BASE_STYLE);
+
         HBox summaryBox = new HBox(15);
         summaryBox.setPadding(new Insets(10));
-        summaryBox.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2); -fx-border-color: transparent; -fx-border-width: 1; -fx-border-radius: 10;");
+        summaryBox.setStyle("-fx-background-color: transparent;");
         summaryBox.setAlignment(Pos.CENTER_LEFT);
         summaryBox.setCursor(Cursor.HAND);
 
@@ -197,14 +204,17 @@ public class HarmoniqView {
 
         VBox detailsBox = new VBox(10);
         detailsBox.setPadding(new Insets(0, 10, 10, 10 + 60 + 15));
-        detailsBox.setStyle("-fx-background-color: white; -fx-background-radius: 0 0 10 10;");
+        detailsBox.setStyle("-fx-background-color: transparent;");
 
         String genreText = "N/A";
         if (song.getGenres() != null && !song.getGenres().isEmpty()) {
             genreText = song.getGenres().stream().collect(Collectors.joining(", "));
         }
 
-        detailsBox.getChildren().add(new Label("Rating: N/A"));
+        DecimalFormat df = new DecimalFormat("#.0");
+        String ratingText = (song.getRating() > 0.0) ? df.format(song.getRating()) + "/10" : "N/A";
+
+        detailsBox.getChildren().add(new Label("Rating: " + ratingText));
         detailsBox.getChildren().add(new Label("Genre: " + genreText));
         detailsBox.getChildren().add(new Label("Tempo: " + song.getTempo() + " BPM"));
         detailsBox.getChildren().add(new Label("Key: " + (song.getKeySignature() != null ? song.getKeySignature() : "N/A")));
@@ -230,7 +240,9 @@ public class HarmoniqView {
             if (currentlyExpandedDetails != null && currentlyExpandedDetails != detailsBox) {
                 currentlyExpandedDetails.setVisible(false);
                 currentlyExpandedDetails.setManaged(false);
-                ((Node)currentlyExpandedDetails.getParent().getChildrenUnmodifiable().get(0)).setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2); -fx-border-color: transparent; -fx-border-width: 1; -fx-border-radius: 10;");
+                if(currentlyHighlightedEntry != null) {
+                    currentlyHighlightedEntry.setStyle(BASE_STYLE);
+                }
             }
 
             detailsBox.setVisible(isExpanding);
@@ -238,15 +250,15 @@ public class HarmoniqView {
 
             if (isExpanding) {
                 currentlyExpandedDetails = detailsBox;
-                 summaryBox.setStyle("-fx-background-color: white; -fx-background-radius: 10 10 0 0; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2); -fx-border-color: #003366; -fx-border-width: 1; -fx-border-radius: 10 10 0 0;");
+                currentlyHighlightedEntry = songEntryContainer;
+                songEntryContainer.setStyle(HIGHLIGHT_STYLE);
             } else {
                 currentlyExpandedDetails = null;
-                 summaryBox.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2); -fx-border-color: transparent; -fx-border-width: 1; -fx-border-radius: 10;");
+                currentlyHighlightedEntry = null;
+                songEntryContainer.setStyle(BASE_STYLE);
             }
         });
         
-        VBox songEntryContainer = new VBox();
-        songEntryContainer.setStyle("-fx-background-color: transparent;");
         songEntryContainer.getChildren().addAll(summaryBox, detailsBox);
 
         return songEntryContainer;
