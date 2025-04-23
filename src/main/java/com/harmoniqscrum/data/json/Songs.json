@@ -464,13 +464,6 @@
                 "volume": 100,
                 "octave": 5,
                 "expression": null,
-                "pitch": "C"
-            },
-            {
-                "duration": 1.0,
-                "volume": 100,
-                "octave": 5,
-                "expression": null,
                 "pitch": "E"
             },
             {
@@ -478,55 +471,20 @@
                 "volume": 100,
                 "octave": 5,
                 "expression": null,
-                "pitch": "G"
-            },
-            {
-                "duration": 1.0,
-                "volume": 100,
-                "octave": 6,
-                "expression": null,
-                "pitch": "C"
-            },
-            {
-                "duration": 1.0,
-                "volume": 100,
-                "octave": 5,
-                "expression": null,
-                "pitch": "A"
-            },
-            {
-                "duration": 1.0,
-                "volume": 100,
-                "octave": 5,
-                "expression": null,
-                "pitch": "F"
-            },
-            {
-                "duration": 1.0,
-                "volume": 100,
-                "octave": 5,
-                "expression": null,
                 "pitch": "D"
-            },
-            {
-                "duration": 1.0,
-                "volume": 100,
-                "octave": 5,
-                "expression": null,
-                "pitch": "A"
             }
         ],
-        "composer": "Fellicia Fredrickson",
+        "composer": "Kyle",
         "genres": [
-            "Classical"
+            "Pop"
         ],
         "rating": 0.0,
-        "tempo": 90,
-        "keySignature": "C Major",
-        "title": "A horses journey 1743553367539",
-        "songId": "33b21299-fb25-4ce1-a4e5-5ef43ad21b8e",
+        "tempo": 122,
+        "keySignature": "G Major",
+        "title": "Test",
+        "songId": "e53fb488-45da-458c-b2e0-6640496cf58c",
         "lyrics": [
-            
+            "test lyrics"
         ],
         "timeSignature": {
             "numerator": 4,

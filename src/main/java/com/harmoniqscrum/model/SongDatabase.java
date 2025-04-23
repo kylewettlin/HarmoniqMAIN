@@ -71,18 +71,24 @@ public class SongDatabase {
      * @param song The song to save
      */
     public void saveSong(Song song) {
-        // Check if song already exists
+        // Check if song already exists (by ID ideally, but using title for now)
+        boolean found = false;
         for (int i = 0; i < songs.size(); i++) {
-            if (songs.get(i).getTitle().equals(song.getTitle())) {
+            if (songs.get(i).getSongId().equals(song.getSongId())) {
                 songs.set(i, song); // Replace existing
-                return;
+                found = true;
+                break;
             }
         }
         
-        // Add new song
-        songs.add(song);
+        // Add new song if not found
+        if (!found) {
+            songs.add(song);
+        }
         
-        // Future implementation will save to Songs.json
+        // Persist the entire updated list to JSON
+        DataWriter.saveSongs(this.songs);
+        System.out.println("Song database updated and saved to JSON.");
     }
     
     /**
@@ -91,9 +97,17 @@ public class SongDatabase {
      * @param song The song to delete
      */
     public void deleteSong(Song song) {
-        songs.removeIf(s -> s.getTitle().equals(song.getTitle()));
+        if (song == null) return; // Add null check
+
+        boolean removed = songs.removeIf(s -> s.getSongId().equals(song.getSongId()));
         
-        // Future implementation will update Songs.json
+        // Persist changes if a song was actually removed
+        if (removed) {
+            DataWriter.saveSongs(this.songs);
+            System.out.println("Song deleted and database saved to JSON.");
+        } else {
+             System.out.println("Song to delete not found in database.");
+        }
     }
     
     /**

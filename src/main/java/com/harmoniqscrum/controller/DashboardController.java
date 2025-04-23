@@ -38,5 +38,19 @@ public class DashboardController {
         }
     }
     
+    /**
+     * Requests the facade to delete the specified song.
+     * @param song The song to delete.
+     */
+    public void deleteSong(Song song) {
+        if (song != null) {
+            System.out.println("Controller requesting deletion for: " + song.getTitle());
+            // Call deleteSong via the facade
+            facade.deleteSong(song); 
+            // Remove direct database call:
+            // SongDatabase.getInstance().deleteSong(song);
+        }
+    }
+    
     // Add methods here later for handling search, song selection etc.
 } 
