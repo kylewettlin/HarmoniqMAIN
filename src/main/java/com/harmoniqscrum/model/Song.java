@@ -268,14 +268,22 @@ public class Song {
                 JSONObject noteJson = (JSONObject) noteObj;
                 String pitch = (String) noteJson.get("pitch");
                 double duration = ((Number) noteJson.get("duration")).doubleValue();
-                int volume = ((Long) noteJson.get("volume")).intValue();
-                int octave = ((Long) noteJson.get("octave")).intValue();
-                String expression = (String) noteJson.get("expression");
+                // Default values if fields are missing in JSON
+                int volume = noteJson.containsKey("volume") ? ((Long) noteJson.get("volume")).intValue() : 100; // Default volume
+                int octave = noteJson.containsKey("octave") ? ((Long) noteJson.get("octave")).intValue() : 5; // Default octave
+                String expression = (String) noteJson.get("expression"); // Can be null
                 
-                Note note = new Note(pitch);
+                Note note;
+                // Check if the pitch indicates a rest (e.g., "R" or potentially null/empty)
+                if (pitch == null || pitch.isEmpty() || "R".equalsIgnoreCase(pitch)) { 
+                    note = new Note("Rest"); // Explicitly set pitch to "Rest"
+                } else {
+                    note = new Note(pitch); // Use the actual pitch
+                }
+                
                 note.setDuration(duration);
                 note.setVolume(volume);
-                note.setOctave(octave);
+                note.setOctave(octave); // Set octave even for rests, though it's irrelevant
                 if (expression != null) {
                     note.setExpression(expression);
                 }
@@ -299,6 +307,14 @@ public class Song {
     public String getKeySignature() { return keySignature; }
     public TimeSignature getTimeSignature() { return timeSignature; }
     public Pattern getPattern() { return pattern; }
+
+    /**
+     * Gets the list of notes in this song.
+     * @return The list of Note objects.
+     */
+    public List<Note> getNotes() {
+        return notes;
+    }
 
     public void setSongId(UUID songId) { this.songId = songId; }
     public void setTitle(String title) { this.title = title; }

@@ -54,6 +54,16 @@ import com.harmoniqscrum.controller.LessonsController;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.ListCell;
+import com.harmoniqscrum.utility.MusicXmlGenerator;
+import com.harmoniqscrum.utility.SheetMusicRenderer;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import javafx.concurrent.Task;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.effect.DropShadow;
 
 /**
  * Main view for the Harmoniq application.
@@ -69,11 +79,21 @@ public class HarmoniqView {
     private LessonsController lessonsController;
     private Node currentlyExpandedDetails = null;
     private Node currentlyHighlightedEntry = null;
+    private Node currentlySelectedLessonTile = null;
     private static final String BASE_STYLE = "-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);";
     private static final String HIGHLIGHT_STYLE = BASE_STYLE + " -fx-border-color: #003366; -fx-border-width: 1;";
     private Stage profilePopupStage;
     private Stage studentSelectionPopupStage;
+    private Stage sheetMusicPopupStage;
     
+    // Styles for lesson tiles
+    private static final String LESSON_TILE_BASE = "-fx-background-radius: 15;";
+    private static final String LESSON_TILE_STYLE = LESSON_TILE_BASE + "-fx-background-color: #003366;";
+    
+    // Define shadow effects
+    private final DropShadow defaultLessonShadow = new DropShadow(10, Color.rgb(0, 0, 0, 0.15));
+    private final DropShadow selectedLessonShadow = new DropShadow(20, Color.rgb(0, 0, 0, 0.4));
+
     public HarmoniqView(Stage stage, HarmoniqFACADE facade) {
         this.stage = stage;
         this.facade = facade;
@@ -543,13 +563,12 @@ public class HarmoniqView {
         
         // Composer
         Label composerLabel = new Label("Composer:"); composerLabel.setStyle(labelStyle);
-        formGrid.add(composerLabel, 0, rowIndex);
         TextField composerField = new TextField(); composerField.setPromptText("Enter composer name");
+        formGrid.add(composerLabel, 0, rowIndex);
         formGrid.add(composerField, 1, rowIndex++);
 
         // Tempo
         Label tempoLabel = new Label("Tempo (BPM):"); tempoLabel.setStyle(labelStyle);
-        formGrid.add(tempoLabel, 0, rowIndex);
         Spinner<Integer> tempoSpinner = new Spinner<>(40, 240, 120); tempoSpinner.setEditable(true);
         formGrid.add(tempoSpinner, 1, rowIndex++);
 
@@ -858,8 +877,22 @@ public class HarmoniqView {
         // Close Button
         Button closeButton = new Button("Close");
         closeButton.setOnAction(e -> profilePopupStage.close());
+        
+        // Sign Out Button
+        Button signOutButton = new Button("Sign Out");
+        signOutButton.setStyle("-fx-background-color: #dc3545; -fx-text-fill: white;"); // Red background
+        signOutButton.setOnAction(e -> {
+            profilePopupStage.close(); // Close the popup first
+            if (loginController != null) {
+                loginController.handleLogout(); // Delegate logout logic to controller
+            } else {
+                 System.err.println("LoginController is null, cannot log out.");
+                 // Optionally show an error alert here
+                 showErrorAlert("Logout Error", "Cannot sign out at this time.");
+            }
+        });
 
-        HBox buttonPane = new HBox(10, saveButton, closeButton);
+        HBox buttonPane = new HBox(10, signOutButton, saveButton, closeButton);
         buttonPane.setAlignment(Pos.CENTER_RIGHT);
         buttonPane.setPadding(new Insets(20, 0, 0, 0));
 
@@ -874,6 +907,7 @@ public class HarmoniqView {
 
     public void showLessonsScreen(LessonsController controller) {
         this.lessonsController = controller;
+        this.currentlySelectedLessonTile = null;
 
         // --- Lessons Layout (Content for ScrollPane) ---
         BorderPane lessonsLayout = new BorderPane();
@@ -914,7 +948,7 @@ public class HarmoniqView {
         lessonsLayout.setTop(topStackPane);
 
         // --- Center Area: Search + Lessons Grid + Lesson Details ---
-        VBox centerContent = new VBox(20); // VBox to hold search and the HBox for grid/details
+        VBox centerContent = new VBox(20);
         centerContent.setPadding(new Insets(20));
 
         // Search Bar
@@ -929,32 +963,35 @@ public class HarmoniqView {
         centerContent.getChildren().add(searchBar);
 
         // HBox to hold Lesson Grid (left) and Details (right)
-        HBox lessonsArea = new HBox(30); // Spacing between grid and details
-        VBox.setVgrow(lessonsArea, Priority.ALWAYS); // Allow this area to grow vertically
+        HBox lessonsArea = new HBox(30);
+        VBox.setVgrow(lessonsArea, Priority.ALWAYS);
 
         // Left Side: Lesson Selection Grid (using TilePane)
         TilePane lessonGrid = new TilePane();
         lessonGrid.setPadding(new Insets(10));
         lessonGrid.setHgap(20);
         lessonGrid.setVgap(20);
-        lessonGrid.setPrefColumns(2); // Aim for 2 columns
+        lessonGrid.setPrefColumns(2);
 
-        // Get assigned songs from controller
         List<Song> assignedSongs = this.lessonsController.getAssignedSongs();
+        Song firstSong = null;
         
-        // Clear placeholder tiles and add actual lesson tiles
-        lessonGrid.getChildren().clear(); // Remove placeholders
+        lessonGrid.getChildren().clear();
         if (assignedSongs == null || assignedSongs.isEmpty()) {
             lessonGrid.getChildren().add(new Label("No lessons assigned."));
         } else {
-            boolean firstTile = true;
+            firstSong = assignedSongs.get(0);
             for (Song assignedSong : assignedSongs) {
-                 // Pass the Song object to createLessonTile
-                 lessonGrid.getChildren().add(createLessonTile(assignedSong, firstTile)); 
-                 firstTile = false; // Only highlight the first actual lesson
+                 Node lessonTile = createLessonTile(assignedSong);
+                 if (assignedSong.equals(firstSong)) {
+                     lessonTile.setEffect(selectedLessonShadow); // Apply selected shadow initially
+                     currentlySelectedLessonTile = lessonTile; // Track it
+                 } else {
+                      lessonTile.setEffect(defaultLessonShadow); // Apply default shadow
+                 }
+                 lessonGrid.getChildren().add(lessonTile);
             }
         }
-        // Wrap grid in a scroll pane if it might overflow
         ScrollPane gridScrollPane = new ScrollPane(lessonGrid);
         gridScrollPane.setFitToWidth(true);
         gridScrollPane.setFitToHeight(true);
@@ -964,31 +1001,25 @@ public class HarmoniqView {
 
         // Right Side: Lesson Details Pane
         VBox detailsPane = new VBox(15);
-        detailsPane.setId("lessonDetailsPane"); // Assign ID here
+        detailsPane.setId("lessonDetailsPane");
         detailsPane.setPadding(new Insets(20));
         detailsPane.setStyle("-fx-background-color: white; -fx-border-color: lightgrey; -fx-border-width: 1; -fx-border-radius: 10;");
         HBox.setHgrow(detailsPane, Priority.ALWAYS);
         
-        // Initial state for details pane
-        Label noLessonSelectedLabel = new Label("Select a lesson from the left.");
-        noLessonSelectedLabel.setFont(Font.font("System", FontWeight.NORMAL, 16));
-        noLessonSelectedLabel.setStyle("-fx-text-fill: grey;");
-        detailsPane.getChildren().add(noLessonSelectedLabel);
-        detailsPane.setAlignment(Pos.CENTER); // Center the initial message
+        // Set initial content (placeholder text)
+        Label initialLabel = new Label(
+            assignedSongs == null || assignedSongs.isEmpty() ? 
+            "No lessons assigned yet." : 
+            "Select a lesson from the left."
+        );
+        initialLabel.setFont(Font.font("System", FontWeight.NORMAL, 16));
+        initialLabel.setStyle("-fx-text-fill: grey;");
+        detailsPane.getChildren().add(initialLabel);
+        detailsPane.setAlignment(Pos.CENTER);
         
         lessonsArea.getChildren().addAll(gridScrollPane, detailsPane);
         centerContent.getChildren().add(lessonsArea);
         
-        // Update the details pane if no lessons are found AFTER setting the initial state
-        if (assignedSongs.isEmpty()) { // Check moved after detailsPane creation
-             detailsPane.getChildren().clear(); // Clear initial message
-             Label noLessonsAssignedLabel = new Label("No lessons assigned yet.");
-             noLessonsAssignedLabel.setFont(Font.font("System", FontWeight.NORMAL, 16));
-             noLessonsAssignedLabel.setStyle("-fx-text-fill: grey;");
-             detailsPane.getChildren().add(noLessonsAssignedLabel);
-             detailsPane.setAlignment(Pos.CENTER);
-        }
-
         lessonsLayout.setCenter(centerContent);
 
         // --- Root ScrollPane (Contains lessonsLayout) ---
@@ -1003,7 +1034,7 @@ public class HarmoniqView {
         if (currentScene != null) {
             currentScene.setRoot(rootScrollPane);
         } else {
-            Scene newScene = new Scene(rootScrollPane, 1000, 750); // Wider scene for lessons
+            Scene newScene = new Scene(rootScrollPane, 1000, 750);
             stage.setScene(newScene);
         }
         stage.setTitle("Harmoniq - Lessons");
@@ -1013,30 +1044,37 @@ public class HarmoniqView {
          if (!stage.isShowing()) {
              stage.show();
         }
+
+        // Update details pane for the first song (if it exists) after scene is set
+        if (firstSong != null) {
+            updateLessonDetailsPane(firstSong); 
+        }
     }
     
-    // Helper method to create a lesson tile
-    private VBox createLessonTile(Song lessonSong, boolean selected) {
+    private VBox createLessonTile(Song lessonSong) {
         VBox tile = new VBox();
-        tile.setPrefSize(200, 150); // Example size
+        tile.setPrefSize(200, 150);
         tile.setAlignment(Pos.CENTER);
-        String baseStyle = "-fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 10, 0, 0, 4);";
-        if (selected) {
-             tile.setStyle(baseStyle + "-fx-background-color: #003366;"); // Dark blue for selected
-        } else {
-             tile.setStyle(baseStyle + "-fx-background-color: white;");
-        }
+        tile.setStyle(LESSON_TILE_STYLE); // Apply the blue style directly
+        // Shadow is set in showLessonsScreen or click handler
         
-        Label titleLabel = new Label(lessonSong.getTitle()); // Use song title
+        Label titleLabel = new Label(lessonSong.getTitle() != null ? lessonSong.getTitle() : "Untitled");
         titleLabel.setFont(Font.font("System", FontWeight.BOLD, 18));
-        titleLabel.setTextFill(selected ? Color.WHITE : Color.BLACK);
+        titleLabel.setTextFill(Color.WHITE); // Set text color to white directly
         
         tile.getChildren().add(titleLabel);
         tile.setCursor(Cursor.HAND);
-        // TODO: Add setOnMouseClicked handler later to load details for this song
+
         tile.setOnMouseClicked(e -> {
-             // Update details pane with info from lessonSong
-             updateLessonDetailsPane(lessonSong);
+            // Reset previous selection's shadow
+            if (currentlySelectedLessonTile != null && currentlySelectedLessonTile != tile) {
+                 currentlySelectedLessonTile.setEffect(defaultLessonShadow); // Reset to default shadow
+            }
+            // Apply selected shadow to current tile
+            tile.setEffect(selectedLessonShadow);
+            currentlySelectedLessonTile = tile;
+            
+            updateLessonDetailsPane(lessonSong);
         });
         
         return tile;
@@ -1044,17 +1082,36 @@ public class HarmoniqView {
 
     // Add helper method to update the details pane
     private void updateLessonDetailsPane(Song song) {
-        // Find the detailsPane in the current scene
-        Node lookupResult = stage.getScene().getRoot().lookup("#lessonDetailsPane");
-        if (lookupResult instanceof VBox) {
-            VBox detailsPane = (VBox) lookupResult;
-            detailsPane.getChildren().clear(); // Clear previous details
+        Node lookupResult = null;
+        try {
+            // Find the detailsPane in the current scene
+            lookupResult = stage.getScene().getRoot().lookup("#lessonDetailsPane");
+        } catch (Exception e) {
+            System.err.println("Error looking up #lessonDetailsPane: " + e.getMessage());
+            e.printStackTrace();
+            showErrorAlert("UI Error", "Could not find the lesson details area.");
+            return; // Cannot proceed
+        }
+        
+        if (!(lookupResult instanceof VBox)) {
+             System.err.println("Could not find details pane (#lessonDetailsPane) as VBox to update.");
+             showErrorAlert("UI Error", "Lesson details area has unexpected type.");
+             return; // Cannot proceed
+        }
+        
+        VBox detailsPane = (VBox) lookupResult;
+        
+        try {
+            detailsPane.getChildren().clear();
             detailsPane.setAlignment(Pos.TOP_LEFT); // Reset alignment
 
              // Re-populate with details from the selected song
-             Label detailTitle = new Label(song.getTitle());
+             Label detailTitle = new Label(song.getTitle() != null ? song.getTitle() : "Untitled Lesson"); // Null check
              detailTitle.setFont(Font.font("System", FontWeight.BOLD, 24));
              detailTitle.setWrapText(true);
+             
+             Separator titleSeparator = new Separator(); // Create separator
+             titleSeparator.setPadding(new Insets(5, 0, 10, 0)); // Add some vertical space around it
 
              // Use GridPane for cleaner key-value display
              GridPane detailsGrid = new GridPane();
@@ -1080,45 +1137,174 @@ public class HarmoniqView {
 
              // Tempo
              Label tempoKey = new Label("Tempo:"); tempoKey.setStyle(labelStyle);
-             Label tempoValue = new Label(song.getTempo() + " BPM"); tempoValue.setStyle(valueStyle);
+             Label tempoValue = new Label(song.getTempo() > 0 ? song.getTempo() + " BPM" : "N/A"); tempoValue.setStyle(valueStyle); // Check tempo > 0
              detailsGrid.add(tempoKey, 0, rowIndex);
              detailsGrid.add(tempoValue, 1, rowIndex++);
              
              // Time Signature
              Label timeSigKey = new Label("Time Signature:"); timeSigKey.setStyle(labelStyle);
-             Label timeSigValue = new Label(song.getTimeSignature() != null ? song.getTimeSignature().toString() : "N/A"); timeSigValue.setStyle(valueStyle);
+             String timeSigText = "N/A";
+             if (song.getTimeSignature() != null) {
+                 timeSigText = song.getTimeSignature().toString();
+             }
+             Label timeSigValue = new Label(timeSigText); timeSigValue.setStyle(valueStyle);
              detailsGrid.add(timeSigKey, 0, rowIndex);
              detailsGrid.add(timeSigValue, 1, rowIndex++);
 
              // Genres
              String genreText = "N/A";
              if (song.getGenres() != null && !song.getGenres().isEmpty()) {
-                 genreText = song.getGenres().stream().collect(Collectors.joining(", "));
-             }
+                 // Wrap genre collection access in try-catch just in case
+                 try {
+                     genreText = song.getGenres().stream().collect(Collectors.joining(", "));
+                 } catch (Exception ex) {
+                     System.err.println("Error processing genres: " + ex.getMessage());
+                     genreText = "Error";
+                 }
+             } 
              Label genreKey = new Label("Genre(s):"); genreKey.setStyle(labelStyle);
              Label genreValue = new Label(genreText); genreValue.setStyle(valueStyle);
              genreValue.setWrapText(true);
              detailsGrid.add(genreKey, 0, rowIndex);
              detailsGrid.add(genreValue, 1, rowIndex++);
              
-             // TODO: Add Placeholder/Button for actual lesson content/song playback
-             Separator separator = new Separator();
-             Button viewSongButton = new Button("View/Play Song");
+             // View Sheet Music Button Area
+             Separator contentSeparator = new Separator(); 
+             Button viewSongButton = new Button("View Sheet Music");
              viewSongButton.setStyle("-fx-background-color: #003366; -fx-text-fill: white;");
+             
+             ProgressIndicator loadingIndicator = new ProgressIndicator(-1.0);
+             loadingIndicator.setVisible(false);
+             loadingIndicator.setMaxSize(25, 25);
+             
+             HBox buttonArea = new HBox(10, viewSongButton, loadingIndicator);
+             buttonArea.setAlignment(Pos.CENTER_LEFT);
+
+             // --- Action for the button --- 
              viewSongButton.setOnAction(e -> {
-                   Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                   alert.setTitle("Not Implemented");
-                   alert.setHeaderText(null);
-                   alert.setContentText("Viewing/Playing the assigned song content will be implemented later.");
-                   alert.showAndWait();
+                // Disable button, show loading
+                viewSongButton.setDisable(true);
+                loadingIndicator.setVisible(true);
+                
+                SheetMusicRenderer renderer = new SheetMusicRenderer();
+                Task<File> renderTask = new Task<File>() {
+                    @Override
+                    protected File call() throws Exception {
+                        return renderer.renderSongToPng(song);
+                    }
+                };
+
+                renderTask.setOnSucceeded(workerStateEvent -> {
+                    File pngFile = renderTask.getValue();
+                    if (pngFile != null && pngFile.exists()) {
+                        try {
+                            Image sheetMusicImage = new Image(new FileInputStream(pngFile));
+                            showSheetMusicPopup(sheetMusicImage, pngFile);
+                        } catch (FileNotFoundException ex) {
+                            showErrorAlert("Rendering Error", "Could not load rendered image file.");
+                        } finally {
+                             viewSongButton.setDisable(false);
+                             loadingIndicator.setVisible(false);
+                        }
+                    } else {
+                        showErrorAlert("Rendering Failed", "LilyPond failed to generate the sheet music image.");
+                        viewSongButton.setDisable(false);
+                        loadingIndicator.setVisible(false);
+                    }
+                });
+
+                renderTask.setOnFailed(workerStateEvent -> {
+                    Throwable exception = renderTask.getException();
+                    System.err.println("Rendering Task Failed: " + exception.getMessage());
+                    exception.printStackTrace();
+                    showErrorAlert("Rendering Error", "An error occurred during sheet music generation: " + exception.getMessage());
+                    viewSongButton.setDisable(false);
+                    loadingIndicator.setVisible(false);
+                });
+
+                new Thread(renderTask).start();
              });
+             // --- End of Action --- 
 
-             detailsPane.getChildren().addAll(detailTitle, detailsGrid, separator, viewSongButton);
+            detailsPane.getChildren().addAll(detailTitle, titleSeparator, detailsGrid, contentSeparator, buttonArea);
 
-        } else {
-            System.err.println("Could not find details pane (#lessonDetailsPane) to update.");
+        } catch (Exception ex) {
+            // Catch any unexpected errors during pane population
+            System.err.println("!!! Critical Error updating lesson details pane for song: " + (song != null ? song.getTitle() : "[null song]") + " !!!");
+            ex.printStackTrace();
+            // Show an error message in the UI
+            detailsPane.getChildren().clear(); // Clear potentially half-populated pane
+            Label errorLabel = new Label("Error displaying lesson details.\nCheck console for more information.");
+            errorLabel.setStyle("-fx-text-fill: red;");
+            detailsPane.getChildren().add(errorLabel);
+            detailsPane.setAlignment(Pos.CENTER);
+            // Optionally show an alert too
+            // showErrorAlert("UI Error", "Failed to display lesson details: " + ex.getMessage());
         }
     }
+
+    // Method to display the sheet music popup
+    private void showSheetMusicPopup(Image sheetMusicImage, File imageFile) {
+         if (sheetMusicPopupStage != null && sheetMusicPopupStage.isShowing()) {
+             sheetMusicPopupStage.toFront();
+             return;
+         }
+         sheetMusicPopupStage = new Stage();
+         sheetMusicPopupStage.initOwner(stage);
+         sheetMusicPopupStage.setTitle("Sheet Music");
+
+         ImageView imageView = new ImageView(sheetMusicImage);
+         imageView.setPreserveRatio(true);
+         // imageView.setFitWidth(800); // Optionally set a fit width
+
+         ScrollPane scrollPane = new ScrollPane(imageView);
+         scrollPane.setFitToWidth(true);
+         scrollPane.setFitToHeight(true); 
+         scrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
+
+         Scene scene = new Scene(scrollPane); // Use a reasonable default size
+         sheetMusicPopupStage.setScene(scene);
+         
+         // Set stage size based on image, but with limits
+         double imgWidth = sheetMusicImage.getWidth();
+         double imgHeight = sheetMusicImage.getHeight();
+         double maxWidth = 1000; // Max popup width
+         double maxHeight = 800; // Max popup height
+         
+         double stageWidth = Math.min(imgWidth + 40, maxWidth); // Add padding
+         double stageHeight = Math.min(imgHeight + 40, maxHeight);
+         
+         sheetMusicPopupStage.setWidth(stageWidth);
+         sheetMusicPopupStage.setHeight(stageHeight);
+         sheetMusicPopupStage.setMinWidth(400); // Min sensible size
+         sheetMusicPopupStage.setMinHeight(300);
+
+         // Ensure temp file is deleted when popup closes
+         sheetMusicPopupStage.setOnHidden(e -> {
+             if (imageFile != null) {
+                 try {
+                     Files.deleteIfExists(imageFile.toPath());
+                     System.out.println("Deleted temp sheet music file: " + imageFile.getName());
+                     // Also delete the temp directory if desired and empty
+                     // Path parentDir = imageFile.getParentFile().toPath();
+                     // Files.deleteIfExists(parentDir);
+                 } catch (IOException ioException) {
+                     System.err.println("Warning: Failed to delete temp sheet music file: " + ioException.getMessage());
+                 }
+             }
+         });
+
+         sheetMusicPopupStage.show();
+    }
+    
+     // Helper for showing error alerts
+     private void showErrorAlert(String title, String content) {
+         Alert alert = new Alert(Alert.AlertType.ERROR);
+         alert.setTitle(title);
+         alert.setHeaderText(null);
+         alert.setContentText(content);
+         alert.showAndWait();
+     }
 
     // --- Method to show the Student Selection Popup ---
     public void showStudentSelectionPopup(Song songToAssign, List<User> students) {

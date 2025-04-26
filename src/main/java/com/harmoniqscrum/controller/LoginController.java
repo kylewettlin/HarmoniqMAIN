@@ -37,4 +37,14 @@ public class LoginController {
             // view.showError("Invalid username or password."); // Using the existing method for now
         }
     }
+    
+    /**
+     * Handles the user logout process.
+     * Clears the session in the facade and returns to the login screen.
+     */
+    public void handleLogout() {
+        System.out.println("Logging out user: " + (facade.getCurrentUser() != null ? facade.getCurrentUser().getUsername() : "N/A"));
+        facade.logout(); // Use the existing logout method
+        view.showLoginScreen(); // Show the login screen again
+    }
 } 
