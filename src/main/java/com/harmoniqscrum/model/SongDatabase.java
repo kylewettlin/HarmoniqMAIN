@@ -2,6 +2,7 @@ package com.harmoniqscrum.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Class for managing song database operations
@@ -63,6 +64,21 @@ public class SongDatabase {
         }
         
         return results;
+    }
+    
+    /**
+     * Finds a song by its UUID.
+     * @param songId The UUID to search for.
+     * @return The Song object if found, otherwise null.
+     */
+    public Song findSongById(UUID songId) {
+        if (songId == null) return null;
+        for (Song song : songs) {
+            if (songId.equals(song.getSongId())) {
+                return song;
+            }
+        }
+        return null;
     }
     
     /**

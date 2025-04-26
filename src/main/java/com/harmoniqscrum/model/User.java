@@ -1,6 +1,7 @@
 package com.harmoniqscrum.model;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class User {
@@ -18,6 +19,7 @@ public class User {
     // Student-specific fields
     private Integer grade;
     private ArrayList<String> completedLessons;
+    private List<String> assignedLessonSongIds;
     
     // Teacher-specific fields
     private ArrayList<String> assignedStudents;
@@ -38,6 +40,7 @@ public class User {
         
         if ("student".equals(role)) {
             this.completedLessons = new ArrayList<>();
+            this.assignedLessonSongIds = new ArrayList<>();
         } else if ("teacher".equals(role)) {
             this.assignedStudents = new ArrayList<>();
         }
@@ -47,7 +50,7 @@ public class User {
     public User(UUID userId, String firstName, String lastName, String username, String email,
                String password, String role, ArrayList<String> favSongs, String theme, 
                String highlightColor, Integer grade, ArrayList<String> completedLessons,
-               ArrayList<String> assignedStudents) {
+               ArrayList<String> assignedStudents, List<String> assignedLessonSongIds) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -61,6 +64,7 @@ public class User {
         this.grade = grade;
         this.completedLessons = completedLessons;
         this.assignedStudents = assignedStudents;
+        this.assignedLessonSongIds = (assignedLessonSongIds != null) ? assignedLessonSongIds : new ArrayList<>();
     }
     
     public UUID getUserId() {
@@ -180,6 +184,21 @@ public class User {
     public void removeAssignedStudent(String studentId) {
         if ("teacher".equals(role)) {
             assignedStudents.remove(studentId);
+        }
+    }
+    
+    public List<String> getAssignedLessonSongIds() {
+        return assignedLessonSongIds;
+    }
+    
+    /**
+     * Adds a song ID to the list of assigned lessons for a student.
+     * Does nothing if the user is not a student or if the ID already exists.
+     * @param songId The UUID string of the song to assign.
+     */
+    public void addAssignedLessonSongId(String songId) {
+        if ("student".equals(role) && this.assignedLessonSongIds != null && !this.assignedLessonSongIds.contains(songId)) {
+            this.assignedLessonSongIds.add(songId);
         }
     }
     

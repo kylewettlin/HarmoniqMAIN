@@ -64,6 +64,21 @@ public class UserList {
     }
 
     /**
+     * Returns a list of all users with the role 'student'.
+     *
+     * @return an ArrayList containing all student users.
+     */
+    public ArrayList<User> getStudents() {
+        ArrayList<User> students = new ArrayList<>();
+        for (User user : users) {
+            if ("student".equalsIgnoreCase(user.getRole())) {
+                students.add(user);
+            }
+        }
+        return students;
+    }
+
+    /**
      * Checks if a user with the specified username exists.
      *
      * @param username the username to check

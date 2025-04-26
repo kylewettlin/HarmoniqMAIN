@@ -1,21 +1,24 @@
 [
     {
-        "firstName": "Alice",
         "lastName": "Johnson",
-        "highlightColor": "#3498db",
-        "password": "secure123",
         "role": "student",
         "completedLessons": [
             "l1"
         ],
-        "grade": 10,
-        "theme": "dark",
         "userId": "9bba704b-a86b-4795-a513-afc08baf9d46",
-        "email": "alice@example.com",
-        "username": "alicej",
         "favoriteSongs": [
             
-        ]
+        ],
+        "assignedLessonSongIds": [
+            
+        ],
+        "firstName": "Alice",
+        "highlightColor": "#3498db",
+        "password": "secure123",
+        "grade": 10,
+        "theme": "dark",
+        "email": "alice@example.com",
+        "username": "alicej"
     },
     {
         "firstName": "Bob",
@@ -49,6 +52,9 @@
         "username": "testuser",
         "favoriteSongs": [
             
+        ],
+        "assignedLessonSongIds": [
+            
         ]
     },
     {
@@ -65,6 +71,9 @@
         "email": "fellicia@example.com",
         "username": "ffredrickson",
         "favoriteSongs": [
+            
+        ],
+        "assignedLessonSongIds": [
             
         ]
     },
@@ -83,6 +92,9 @@
         "username": "ffred",
         "favoriteSongs": [
             
+        ],
+        "assignedLessonSongIds": [
+            
         ]
     },
     {
@@ -98,6 +110,26 @@
         "userId": "de736edc-e18d-4611-a901-5fb41785daf9",
         "email": "kwettlin@email.sc.edu",
         "username": "kylewettlin",
+        "favoriteSongs": [
+            
+        ],
+        "assignedLessonSongIds": [
+            "a79067ee-506f-4b65-9c9b-6a4a09eacb8e"
+        ]
+    },
+    {
+        "firstName": "kyle",
+        "lastName": "wettlin",
+        "highlightColor": "blue",
+        "password": "admin",
+        "assignedStudents": [
+            
+        ],
+        "role": "teacher",
+        "theme": "light",
+        "userId": "948c7822-f6fe-4784-a93c-ce8650b00d42",
+        "email": "a",
+        "username": "tkylewettlin",
         "favoriteSongs": [
             
         ]

@@ -2,14 +2,19 @@ package com.harmoniqscrum.controller;
 
 import com.harmoniqscrum.model.HarmoniqFACADE;
 import com.harmoniqscrum.model.Song;
+import com.harmoniqscrum.model.User;
 import java.util.List;
+import com.harmoniqscrum.model.view.HarmoniqView;
+import javafx.scene.control.Alert;
 
 public class DashboardController {
 
     private HarmoniqFACADE facade;
+    private HarmoniqView view;
 
-    public DashboardController(HarmoniqFACADE facade) {
+    public DashboardController(HarmoniqFACADE facade, HarmoniqView view) {
         this.facade = facade;
+        this.view = view;
     }
 
     /**
@@ -52,5 +57,46 @@ public class DashboardController {
         }
     }
     
+    /**
+     * Retrieves the list of all students from the facade.
+     * @return A list of student User objects.
+     */
+    public List<User> getAllStudents() {
+         return facade.getAllStudents();
+    }
+    
+    /**
+     * Initiates the process of assigning a song as a lesson.
+     * Fetches the student list and triggers the view to show the selection popup.
+     * @param song The song to be assigned.
+     */
+    public void handleAssignLessonAttempt(Song song) {
+        if (song == null) return;
+        
+        List<User> students = getAllStudents();
+        if (students.isEmpty()) {
+            // Show alert if no students exist
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("No Students Found");
+            alert.setHeaderText(null);
+            alert.setContentText("There are no students registered in the system to assign lessons to.");
+            alert.showAndWait();
+        } else {
+            // Trigger the view to show the popup
+            view.showStudentSelectionPopup(song, students);
+        }
+    }
+
+    /**
+     * Called by the view after a student is selected in the popup.
+     * @param song The song being assigned.
+     * @param student The selected student.
+     * @return true if assignment was successful, false otherwise.
+     */
+    public boolean assignLessonToStudent(Song song, User student) {
+        if (song == null || student == null) return false;
+        return facade.assignLesson(song, student);
+    }
+
     // Add methods here later for handling search, song selection etc.
 } 

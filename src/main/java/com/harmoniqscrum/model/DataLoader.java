@@ -3,6 +3,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.UUID;
 import java.util.Iterator;
+import java.util.List;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -73,10 +74,24 @@ public class DataLoader extends DataConstants {
                     }
                 }
                 
+                // Get assigned lesson song IDs (for students)
+                List<String> assignedLessonSongIds = null;
+                if ("student".equals(role) && userJSON.containsKey("assignedLessonSongIds")) {
+                    assignedLessonSongIds = new ArrayList<>();
+                    JSONArray assignedLessonsJSON = (JSONArray) userJSON.get("assignedLessonSongIds");
+                    if (assignedLessonsJSON != null) {
+                        for (int j = 0; j < assignedLessonsJSON.size(); j++) {
+                            assignedLessonSongIds.add((String) assignedLessonsJSON.get(j));
+                        }
+                    }
+                } else if ("student".equals(role)) {
+                     assignedLessonSongIds = new ArrayList<>(); // Initialize if key missing but role is student
+                }
+                
                 // Create and add the user
                 users.add(new User(userId, firstName, lastName, username, email, 
                                   password, role, favSongs, theme, highlightColor, 
-                                  grade, completedLessons, assignedStudents));
+                                  grade, completedLessons, assignedStudents, assignedLessonSongIds));
             }
             
             reader.close();

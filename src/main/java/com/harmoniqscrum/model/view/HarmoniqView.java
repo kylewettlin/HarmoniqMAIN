@@ -45,6 +45,15 @@ import javafx.stage.Modality;
 import javafx.stage.Window;
 import com.harmoniqscrum.model.User;
 import javafx.scene.control.Separator;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.TilePane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
+import com.harmoniqscrum.controller.LessonsController;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.ListCell;
 
 /**
  * Main view for the Harmoniq application.
@@ -57,11 +66,13 @@ public class HarmoniqView {
     private DashboardController dashboardController;
     private StudioController studioController;
     private CreateAccountController createAccountController;
+    private LessonsController lessonsController;
     private Node currentlyExpandedDetails = null;
     private Node currentlyHighlightedEntry = null;
     private static final String BASE_STYLE = "-fx-background-color: white; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);";
     private static final String HIGHLIGHT_STYLE = BASE_STYLE + " -fx-border-color: #003366; -fx-border-width: 1;";
     private Stage profilePopupStage;
+    private Stage studentSelectionPopupStage;
     
     public HarmoniqView(Stage stage, HarmoniqFACADE facade) {
         this.stage = stage;
@@ -202,6 +213,10 @@ public class HarmoniqView {
         Button songsButton = new Button("Songs"); songsButton.setDisable(true); // Disable on main screen
         Button lessonsButton = new Button("Lessons");
         Button studioButton = new Button("Studio");
+        lessonsButton.setOnAction(e -> {
+            this.lessonsController = new LessonsController(facade);
+            showLessonsScreen(this.lessonsController);
+        });
         // Wire up Studio Button action (moved logic here)
          studioButton.setOnAction(e -> {
              this.studioController = new StudioController(facade);
@@ -232,6 +247,7 @@ public class HarmoniqView {
         searchField.setPromptText("Search here");
         searchField.setPrefWidth(300);
         Button searchButton = new Button("Search");
+        searchButton.setStyle("-fx-background-color: #003366; -fx-text-fill: white;");
         searchBar.getChildren().addAll(searchButton, searchField);
         
         centerArea.getChildren().add(searchBar);
@@ -323,6 +339,7 @@ public class HarmoniqView {
         detailsBox.getChildren().add(new Label("Tempo: " + song.getTempo() + " BPM"));
         detailsBox.getChildren().add(new Label("Key: " + (song.getKeySignature() != null ? song.getKeySignature() : "N/A")));
 
+        // Define Play and Delete buttons first
         Button playButton = new Button("Play Song");
         playButton.setStyle("-fx-background-color: #003366; -fx-text-fill: white;");
         playButton.setOnAction(e -> {
@@ -330,18 +347,14 @@ public class HarmoniqView {
                 dashboardController.playSong(song);
             }
         });
-        
         Button deleteButton = new Button("Delete");
         deleteButton.setStyle("-fx-background-color: #cc0000; -fx-text-fill: white;");
-        
         boolean isDefaultSong = "Symphony No. 5".equalsIgnoreCase(song.getTitle()) && 
                                 "Beethoven".equalsIgnoreCase(song.getComposer());
-        
         deleteButton.setDisable(isDefaultSong);
         if (isDefaultSong) {
              deleteButton.setTooltip(new javafx.scene.control.Tooltip("Default song cannot be deleted."));
         }
-        
         deleteButton.setOnAction(e -> {
              Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
             confirmAlert.setTitle("Confirm Deletion");
@@ -369,11 +382,26 @@ public class HarmoniqView {
             });
         });
 
+        // Create the button HBox
         Region buttonSpacer = new Region();
         HBox.setHgrow(buttonSpacer, Priority.ALWAYS);
-        HBox buttonBox = new HBox(10, buttonSpacer, deleteButton, playButton);
+        HBox buttonBox = new HBox(10, buttonSpacer, deleteButton, playButton); // Add delete/play first
         buttonBox.setAlignment(Pos.CENTER_RIGHT);
         buttonBox.setPadding(new Insets(5, 0, 0, 0));
+        
+        // Add "Assign as Lesson" button conditionally
+        if (facade.getCurrentUser() != null && "teacher".equalsIgnoreCase(facade.getCurrentUser().getRole())) {
+             Button assignButton = new Button("Assign Lesson");
+             assignButton.setStyle("-fx-background-color: #28a745; -fx-text-fill: white;");
+             assignButton.setOnAction(e -> {
+                 // Trigger the controller to handle the assign attempt
+                 if (dashboardController != null) {
+                      dashboardController.handleAssignLessonAttempt(song);
+                 }
+             });
+             buttonBox.getChildren().add(0, assignButton); // Add to buttonBox
+        }
+
         detailsBox.getChildren().add(buttonBox);
         
         detailsBox.setVisible(false);
@@ -469,7 +497,11 @@ public class HarmoniqView {
                 // TODO: Could potentially recreate dashboardController if needed
             }
         });
-        Button lessonsButton = new Button("Lessons"); // TODO: Add action later
+        Button lessonsButton = new Button("Lessons");
+        lessonsButton.setOnAction(e -> {
+            this.lessonsController = new LessonsController(facade);
+            showLessonsScreen(this.lessonsController);
+        });
         Button studioButton = new Button("Studio");
         studioButton.setDisable(true); // Disable studio button when on studio page
 
@@ -523,7 +555,6 @@ public class HarmoniqView {
 
         // Key Signature
         Label keySigLabel = new Label("Key Signature:"); keySigLabel.setStyle(labelStyle);
-        formGrid.add(keySigLabel, 0, rowIndex);
         ComboBox<String> keySignatureBox = new ComboBox<>(FXCollections.observableArrayList(
             "C Major", "G Major", "D Major", "A Major", "E Major", "B Major", "F# Major", "C# Major",
             "F Major", "Bb Major", "Eb Major", "Ab Major", "Db Major", "Gb Major", "Cb Major",
@@ -535,7 +566,6 @@ public class HarmoniqView {
         
         // Time Signature
         Label timeSigLabel = new Label("Time Signature:"); timeSigLabel.setStyle(labelStyle);
-        formGrid.add(timeSigLabel, 0, rowIndex);
         Spinner<Integer> timeSigNumSpinner = new Spinner<>(1, 16, 4);
         Label slashLabel = new Label("/"); slashLabel.setStyle(labelStyle);
         Spinner<Integer> timeSigDenSpinner = new Spinner<>(new SpinnerValueFactory.ListSpinnerValueFactory<>(FXCollections.observableArrayList(2, 4, 8, 16)));
@@ -840,5 +870,339 @@ public class HarmoniqView {
         profilePopupStage.sizeToScene(); // Adjust size
         profilePopupStage.setResizable(false); 
         profilePopupStage.show();
+    }
+
+    public void showLessonsScreen(LessonsController controller) {
+        this.lessonsController = controller;
+
+        // --- Lessons Layout (Content for ScrollPane) ---
+        BorderPane lessonsLayout = new BorderPane();
+
+        // --- Top Area (Reusing StackPane structure) ---
+        StackPane topStackPane = new StackPane();
+        topStackPane.setStyle("-fx-background-color: white;");
+        Image logoImage = new Image(getClass().getResourceAsStream("/Logo.png"));
+        ImageView logoView = new ImageView(logoImage);
+        logoView.setFitHeight(120);
+        logoView.setPreserveRatio(true);
+        StackPane.setAlignment(logoView, Pos.TOP_LEFT);
+        HBox navHBox = new HBox(20);
+        navHBox.setAlignment(Pos.CENTER_LEFT);
+        navHBox.setPadding(new Insets(40, 20, 10, 150));
+        navHBox.setStyle("-fx-border-color: lightgrey; -fx-border-width: 0 0 1 0;");
+        Button songsButton = new Button("Songs");
+        songsButton.setOnAction(e -> {
+             if (this.dashboardController != null) {
+                 showMainScreen(this.dashboardController);
+             } else {
+                // Potentially recreate controller if needed
+                 System.err.println("Dashboard controller null, cannot switch.");
+             }
+        });
+        Button lessonsButtonNav = new Button("Lessons"); lessonsButtonNav.setDisable(true);
+        Button studioButton = new Button("Studio");
+        studioButton.setOnAction(e -> {
+            this.studioController = new StudioController(facade);
+            showStudioScreen(this.studioController);
+        });
+        Region spacer = new Region(); HBox.setHgrow(spacer, Priority.ALWAYS);
+        Button profileButton = new Button("👤");
+        profileButton.setStyle("-fx-font-size: 18px;");
+        profileButton.setOnAction(e -> showProfilePopup());
+        navHBox.getChildren().addAll(songsButton, lessonsButtonNav, studioButton, spacer, profileButton);
+        topStackPane.getChildren().addAll(logoView, navHBox);
+        lessonsLayout.setTop(topStackPane);
+
+        // --- Center Area: Search + Lessons Grid + Lesson Details ---
+        VBox centerContent = new VBox(20); // VBox to hold search and the HBox for grid/details
+        centerContent.setPadding(new Insets(20));
+
+        // Search Bar
+        HBox searchBar = new HBox(10);
+        searchBar.setAlignment(Pos.CENTER_LEFT);
+        TextField searchField = new TextField();
+        searchField.setPromptText("Search lesson");
+        searchField.setPrefWidth(300);
+        Button searchButton = new Button("Search");
+        searchButton.setStyle("-fx-background-color: #003366; -fx-text-fill: white;");
+        searchBar.getChildren().addAll(searchButton, searchField);
+        centerContent.getChildren().add(searchBar);
+
+        // HBox to hold Lesson Grid (left) and Details (right)
+        HBox lessonsArea = new HBox(30); // Spacing between grid and details
+        VBox.setVgrow(lessonsArea, Priority.ALWAYS); // Allow this area to grow vertically
+
+        // Left Side: Lesson Selection Grid (using TilePane)
+        TilePane lessonGrid = new TilePane();
+        lessonGrid.setPadding(new Insets(10));
+        lessonGrid.setHgap(20);
+        lessonGrid.setVgap(20);
+        lessonGrid.setPrefColumns(2); // Aim for 2 columns
+
+        // Get assigned songs from controller
+        List<Song> assignedSongs = this.lessonsController.getAssignedSongs();
+        
+        // Clear placeholder tiles and add actual lesson tiles
+        lessonGrid.getChildren().clear(); // Remove placeholders
+        if (assignedSongs == null || assignedSongs.isEmpty()) {
+            lessonGrid.getChildren().add(new Label("No lessons assigned."));
+        } else {
+            boolean firstTile = true;
+            for (Song assignedSong : assignedSongs) {
+                 // Pass the Song object to createLessonTile
+                 lessonGrid.getChildren().add(createLessonTile(assignedSong, firstTile)); 
+                 firstTile = false; // Only highlight the first actual lesson
+            }
+        }
+        // Wrap grid in a scroll pane if it might overflow
+        ScrollPane gridScrollPane = new ScrollPane(lessonGrid);
+        gridScrollPane.setFitToWidth(true);
+        gridScrollPane.setFitToHeight(true);
+        gridScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        gridScrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
+        HBox.setHgrow(gridScrollPane, Priority.NEVER); // Don't let grid scrollpane grow horizontally
+
+        // Right Side: Lesson Details Pane
+        VBox detailsPane = new VBox(15);
+        detailsPane.setId("lessonDetailsPane"); // Assign ID here
+        detailsPane.setPadding(new Insets(20));
+        detailsPane.setStyle("-fx-background-color: white; -fx-border-color: lightgrey; -fx-border-width: 1; -fx-border-radius: 10;");
+        HBox.setHgrow(detailsPane, Priority.ALWAYS);
+        
+        // Initial state for details pane
+        Label noLessonSelectedLabel = new Label("Select a lesson from the left.");
+        noLessonSelectedLabel.setFont(Font.font("System", FontWeight.NORMAL, 16));
+        noLessonSelectedLabel.setStyle("-fx-text-fill: grey;");
+        detailsPane.getChildren().add(noLessonSelectedLabel);
+        detailsPane.setAlignment(Pos.CENTER); // Center the initial message
+        
+        lessonsArea.getChildren().addAll(gridScrollPane, detailsPane);
+        centerContent.getChildren().add(lessonsArea);
+        
+        // Update the details pane if no lessons are found AFTER setting the initial state
+        if (assignedSongs.isEmpty()) { // Check moved after detailsPane creation
+             detailsPane.getChildren().clear(); // Clear initial message
+             Label noLessonsAssignedLabel = new Label("No lessons assigned yet.");
+             noLessonsAssignedLabel.setFont(Font.font("System", FontWeight.NORMAL, 16));
+             noLessonsAssignedLabel.setStyle("-fx-text-fill: grey;");
+             detailsPane.getChildren().add(noLessonsAssignedLabel);
+             detailsPane.setAlignment(Pos.CENTER);
+        }
+
+        lessonsLayout.setCenter(centerContent);
+
+        // --- Root ScrollPane (Contains lessonsLayout) ---
+        ScrollPane rootScrollPane = new ScrollPane(lessonsLayout);
+        rootScrollPane.setFitToWidth(true);
+        rootScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+        rootScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        rootScrollPane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
+        
+        // --- Update Scene ---
+        Scene currentScene = stage.getScene();
+        if (currentScene != null) {
+            currentScene.setRoot(rootScrollPane);
+        } else {
+            Scene newScene = new Scene(rootScrollPane, 1000, 750); // Wider scene for lessons
+            stage.setScene(newScene);
+        }
+        stage.setTitle("Harmoniq - Lessons");
+        stage.setWidth(1000);
+        stage.setHeight(750);
+        stage.centerOnScreen();
+         if (!stage.isShowing()) {
+             stage.show();
+        }
+    }
+    
+    // Helper method to create a lesson tile
+    private VBox createLessonTile(Song lessonSong, boolean selected) {
+        VBox tile = new VBox();
+        tile.setPrefSize(200, 150); // Example size
+        tile.setAlignment(Pos.CENTER);
+        String baseStyle = "-fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.15), 10, 0, 0, 4);";
+        if (selected) {
+             tile.setStyle(baseStyle + "-fx-background-color: #003366;"); // Dark blue for selected
+        } else {
+             tile.setStyle(baseStyle + "-fx-background-color: white;");
+        }
+        
+        Label titleLabel = new Label(lessonSong.getTitle()); // Use song title
+        titleLabel.setFont(Font.font("System", FontWeight.BOLD, 18));
+        titleLabel.setTextFill(selected ? Color.WHITE : Color.BLACK);
+        
+        tile.getChildren().add(titleLabel);
+        tile.setCursor(Cursor.HAND);
+        // TODO: Add setOnMouseClicked handler later to load details for this song
+        tile.setOnMouseClicked(e -> {
+             // Update details pane with info from lessonSong
+             updateLessonDetailsPane(lessonSong);
+        });
+        
+        return tile;
+    }
+
+    // Add helper method to update the details pane
+    private void updateLessonDetailsPane(Song song) {
+        // Find the detailsPane in the current scene
+        Node lookupResult = stage.getScene().getRoot().lookup("#lessonDetailsPane");
+        if (lookupResult instanceof VBox) {
+            VBox detailsPane = (VBox) lookupResult;
+            detailsPane.getChildren().clear(); // Clear previous details
+            detailsPane.setAlignment(Pos.TOP_LEFT); // Reset alignment
+
+             // Re-populate with details from the selected song
+             Label detailTitle = new Label(song.getTitle());
+             detailTitle.setFont(Font.font("System", FontWeight.BOLD, 24));
+             detailTitle.setWrapText(true);
+
+             // Use GridPane for cleaner key-value display
+             GridPane detailsGrid = new GridPane();
+             detailsGrid.setHgap(10);
+             detailsGrid.setVgap(8);
+             detailsGrid.setPadding(new Insets(10, 0, 10, 0));
+
+             int rowIndex = 0;
+             String labelStyle = "-fx-font-weight: bold; -fx-text-fill: #333;";
+             String valueStyle = "-fx-text-fill: #555;";
+
+             // Composer
+             Label composerKey = new Label("Composer:"); composerKey.setStyle(labelStyle);
+             Label composerValue = new Label(song.getComposer() != null ? song.getComposer() : "N/A"); composerValue.setStyle(valueStyle);
+             detailsGrid.add(composerKey, 0, rowIndex);
+             detailsGrid.add(composerValue, 1, rowIndex++);
+
+             // Key Signature
+             Label keyKey = new Label("Key:"); keyKey.setStyle(labelStyle);
+             Label keyValue = new Label(song.getKeySignature() != null ? song.getKeySignature() : "N/A"); keyValue.setStyle(valueStyle);
+             detailsGrid.add(keyKey, 0, rowIndex);
+             detailsGrid.add(keyValue, 1, rowIndex++);
+
+             // Tempo
+             Label tempoKey = new Label("Tempo:"); tempoKey.setStyle(labelStyle);
+             Label tempoValue = new Label(song.getTempo() + " BPM"); tempoValue.setStyle(valueStyle);
+             detailsGrid.add(tempoKey, 0, rowIndex);
+             detailsGrid.add(tempoValue, 1, rowIndex++);
+             
+             // Time Signature
+             Label timeSigKey = new Label("Time Signature:"); timeSigKey.setStyle(labelStyle);
+             Label timeSigValue = new Label(song.getTimeSignature() != null ? song.getTimeSignature().toString() : "N/A"); timeSigValue.setStyle(valueStyle);
+             detailsGrid.add(timeSigKey, 0, rowIndex);
+             detailsGrid.add(timeSigValue, 1, rowIndex++);
+
+             // Genres
+             String genreText = "N/A";
+             if (song.getGenres() != null && !song.getGenres().isEmpty()) {
+                 genreText = song.getGenres().stream().collect(Collectors.joining(", "));
+             }
+             Label genreKey = new Label("Genre(s):"); genreKey.setStyle(labelStyle);
+             Label genreValue = new Label(genreText); genreValue.setStyle(valueStyle);
+             genreValue.setWrapText(true);
+             detailsGrid.add(genreKey, 0, rowIndex);
+             detailsGrid.add(genreValue, 1, rowIndex++);
+             
+             // TODO: Add Placeholder/Button for actual lesson content/song playback
+             Separator separator = new Separator();
+             Button viewSongButton = new Button("View/Play Song");
+             viewSongButton.setStyle("-fx-background-color: #003366; -fx-text-fill: white;");
+             viewSongButton.setOnAction(e -> {
+                   Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                   alert.setTitle("Not Implemented");
+                   alert.setHeaderText(null);
+                   alert.setContentText("Viewing/Playing the assigned song content will be implemented later.");
+                   alert.showAndWait();
+             });
+
+             detailsPane.getChildren().addAll(detailTitle, detailsGrid, separator, viewSongButton);
+
+        } else {
+            System.err.println("Could not find details pane (#lessonDetailsPane) to update.");
+        }
+    }
+
+    // --- Method to show the Student Selection Popup ---
+    public void showStudentSelectionPopup(Song songToAssign, List<User> students) {
+        // Prevent multiple popups
+        if (studentSelectionPopupStage != null && studentSelectionPopupStage.isShowing()) {
+            studentSelectionPopupStage.toFront();
+            return;
+        }
+
+        studentSelectionPopupStage = new Stage();
+        studentSelectionPopupStage.initModality(Modality.WINDOW_MODAL);
+        studentSelectionPopupStage.initOwner(stage);
+        studentSelectionPopupStage.setTitle("Assign '" + songToAssign.getTitle() + "'");
+
+        VBox popupLayout = new VBox(15);
+        popupLayout.setPadding(new Insets(20));
+        popupLayout.setMinWidth(350);
+
+        Label instructionLabel = new Label("Select a student to assign this lesson to:");
+        instructionLabel.setStyle("-fx-text-fill: black;");
+
+        ListView<User> studentListView = new ListView<>();
+        studentListView.setItems(FXCollections.observableArrayList(students));
+        studentListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+        
+        // Optional: Custom cell factory to show name nicely (User already has good toString())
+        /* studentListView.setCellFactory(lv -> new ListCell<User>() {
+            @Override
+            protected void updateItem(User user, boolean empty) {
+                super.updateItem(user, empty);
+                setText(empty ? null : user.getFirstName() + " " + user.getLastName() + " (" + user.getUsername() + ")");
+            }
+        }); */
+        
+        popupLayout.getChildren().addAll(instructionLabel, studentListView);
+
+        // Buttons
+        Button assignBtn = new Button("Assign");
+        assignBtn.setDefaultButton(true);
+        assignBtn.setOnAction(e -> {
+            User selectedStudent = studentListView.getSelectionModel().getSelectedItem();
+            if (selectedStudent == null) {
+                 Alert alert = new Alert(Alert.AlertType.WARNING);
+                 alert.setTitle("No Selection");
+                 alert.setHeaderText(null);
+                 alert.setContentText("Please select a student from the list.");
+                 alert.showAndWait();
+                 return;
+            }
+            
+            // Call controller to perform assignment
+            boolean success = dashboardController.assignLessonToStudent(songToAssign, selectedStudent);
+            
+            if (success) {
+                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                 alert.setTitle("Lesson Assigned");
+                 alert.setHeaderText(null);
+                 alert.setContentText("Successfully assigned '" + songToAssign.getTitle() + "' to " + selectedStudent.getUsername() + ".");
+                 alert.showAndWait();
+                 studentSelectionPopupStage.close();
+            } else {
+                 Alert alert = new Alert(Alert.AlertType.ERROR);
+                 alert.setTitle("Assignment Failed");
+                 alert.setHeaderText(null);
+                 alert.setContentText("Could not assign lesson. See logs for details.");
+                 alert.showAndWait();
+                 // Keep popup open for potential retry or cancellation
+            }
+        });
+
+        Button cancelBtn = new Button("Cancel");
+        cancelBtn.setCancelButton(true);
+        cancelBtn.setOnAction(e -> studentSelectionPopupStage.close());
+
+        HBox buttonPane = new HBox(10, cancelBtn, assignBtn);
+        buttonPane.setAlignment(Pos.CENTER_RIGHT);
+        buttonPane.setPadding(new Insets(15, 0, 0, 0));
+
+        popupLayout.getChildren().add(buttonPane);
+
+        Scene popupScene = new Scene(popupLayout);
+        studentSelectionPopupStage.setScene(popupScene);
+        studentSelectionPopupStage.sizeToScene();
+        studentSelectionPopupStage.setResizable(false);
+        studentSelectionPopupStage.show();
     }
 } 

@@ -21,8 +21,8 @@ public class LoginController {
 
         if (loggedInUser != null) {
             System.out.println("Login successful for: " + loggedInUser.getUsername());
-            // Create the controller for the next screen
-            DashboardController dashboardController = new DashboardController(facade);
+            // Create the controller for the next screen, passing view
+            DashboardController dashboardController = new DashboardController(facade, this.view);
             // Tell the view to switch and pass the new controller
             view.showMainScreen(dashboardController);
         } else {

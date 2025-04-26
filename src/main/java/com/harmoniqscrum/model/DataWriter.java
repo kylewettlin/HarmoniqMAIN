@@ -77,6 +77,16 @@ public class DataWriter extends DataConstants {
                 }
             }
             userDetails.put(USER_COMPLETED_LESSONS, completedLessonsJSON);
+            
+            // Add assigned lesson song IDs
+            JSONArray assignedLessonsSongIdsJSON = new JSONArray();
+            List<String> assignedLessonSongIds = user.getAssignedLessonSongIds();
+            if (assignedLessonSongIds != null) {
+                for (String songId : assignedLessonSongIds) {
+                    assignedLessonsSongIdsJSON.add(songId);
+                }
+            }
+            userDetails.put("assignedLessonSongIds", assignedLessonsSongIdsJSON); // Use string literal key
         }
         
         // Add teacher-specific properties
