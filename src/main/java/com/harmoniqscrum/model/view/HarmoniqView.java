@@ -85,6 +85,8 @@ public class HarmoniqView {
     private Stage profilePopupStage;
     private Stage studentSelectionPopupStage;
     private Stage sheetMusicPopupStage;
+    private TilePane lessonGrid;
+    private VBox songListVBox; // Add songListVBox as class field
     
     // Styles for lesson tiles
     private static final String LESSON_TILE_BASE = "-fx-background-radius: 15;";
@@ -268,26 +270,40 @@ public class HarmoniqView {
         searchField.setPrefWidth(300);
         Button searchButton = new Button("Search");
         searchButton.setStyle("-fx-background-color: #003366; -fx-text-fill: white;");
-        searchBar.getChildren().addAll(searchButton, searchField);
         
+        // Add search functionality
+        searchButton.setOnAction(e -> {
+            String query = searchField.getText().trim();
+            List<Song> searchResults = facade.searchSongs(query);
+            updateSongList(searchResults);
+        });
+        
+        // Add search on Enter key
+        searchField.setOnAction(e -> {
+            String query = searchField.getText().trim();
+            List<Song> searchResults = facade.searchSongs(query);
+            updateSongList(searchResults);
+        });
+        
+        searchBar.getChildren().addAll(searchButton, searchField);
         centerArea.getChildren().add(searchBar);
 
         // Song List Area (inside ScrollPane)
-        VBox songListVBox = new VBox(10);
-        songListVBox.setStyle("-fx-padding: 10;");
+        this.songListVBox = new VBox(10);
+        this.songListVBox.setStyle("-fx-padding: 10;");
         
         List<Song> songs = this.dashboardController.getSongs();
         if (songs == null || songs.isEmpty()) {
-            songListVBox.getChildren().add(new Label("No songs found."));
+            this.songListVBox.getChildren().add(new Label("No songs found."));
         } else {
             for (Song song : songs) {
-                 songListVBox.getChildren().add(createSongEntry(song));
+                 this.songListVBox.getChildren().add(createSongEntry(song));
             }
         }
 
         // Create ScrollPane for the song list
         ScrollPane songListScrollPane = new ScrollPane();
-        songListScrollPane.setContent(songListVBox);
+        songListScrollPane.setContent(this.songListVBox);
         songListScrollPane.setFitToWidth(true);
         songListScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
         songListScrollPane.setStyle("-fx-background-color: #f4f4f4; -fx-background: #f4f4f4; -fx-border-radius: 5;");
@@ -959,6 +975,21 @@ public class HarmoniqView {
         searchField.setPrefWidth(300);
         Button searchButton = new Button("Search");
         searchButton.setStyle("-fx-background-color: #003366; -fx-text-fill: white;");
+        
+        // Add search functionality
+        searchButton.setOnAction(e -> {
+            String query = searchField.getText().trim();
+            List<Song> searchResults = facade.searchSongs(query);
+            updateLessonGrid(searchResults);
+        });
+        
+        // Add search on Enter key
+        searchField.setOnAction(e -> {
+            String query = searchField.getText().trim();
+            List<Song> searchResults = facade.searchSongs(query);
+            updateLessonGrid(searchResults);
+        });
+        
         searchBar.getChildren().addAll(searchButton, searchField);
         centerContent.getChildren().add(searchBar);
 
@@ -967,18 +998,18 @@ public class HarmoniqView {
         VBox.setVgrow(lessonsArea, Priority.ALWAYS);
 
         // Left Side: Lesson Selection Grid (using TilePane)
-        TilePane lessonGrid = new TilePane();
-        lessonGrid.setPadding(new Insets(10));
-        lessonGrid.setHgap(20);
-        lessonGrid.setVgap(20);
-        lessonGrid.setPrefColumns(2);
+        this.lessonGrid = new TilePane();
+        this.lessonGrid.setPadding(new Insets(10));
+        this.lessonGrid.setHgap(20);
+        this.lessonGrid.setVgap(20);
+        this.lessonGrid.setPrefColumns(2);
 
         List<Song> assignedSongs = this.lessonsController.getAssignedSongs();
         Song firstSong = null;
         
-        lessonGrid.getChildren().clear();
+        this.lessonGrid.getChildren().clear();
         if (assignedSongs == null || assignedSongs.isEmpty()) {
-            lessonGrid.getChildren().add(new Label("No lessons assigned."));
+            this.lessonGrid.getChildren().add(new Label("No lessons assigned."));
         } else {
             firstSong = assignedSongs.get(0);
             for (Song assignedSong : assignedSongs) {
@@ -989,10 +1020,10 @@ public class HarmoniqView {
                  } else {
                       lessonTile.setEffect(defaultLessonShadow); // Apply default shadow
                  }
-                 lessonGrid.getChildren().add(lessonTile);
+                 this.lessonGrid.getChildren().add(lessonTile);
             }
         }
-        ScrollPane gridScrollPane = new ScrollPane(lessonGrid);
+        ScrollPane gridScrollPane = new ScrollPane(this.lessonGrid);
         gridScrollPane.setFitToWidth(true);
         gridScrollPane.setFitToHeight(true);
         gridScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
@@ -1390,5 +1421,35 @@ public class HarmoniqView {
         studentSelectionPopupStage.sizeToScene();
         studentSelectionPopupStage.setResizable(false);
         studentSelectionPopupStage.show();
+    }
+
+    // Helper method to update the lesson grid with search results
+    private void updateLessonGrid(List<Song> songs) {
+        if (this.lessonGrid == null) return;
+        
+        this.lessonGrid.getChildren().clear();
+        if (songs == null || songs.isEmpty()) {
+            this.lessonGrid.getChildren().add(new Label("No lessons found."));
+        } else {
+            for (Song song : songs) {
+                Node lessonTile = createLessonTile(song);
+                lessonTile.setEffect(defaultLessonShadow);
+                this.lessonGrid.getChildren().add(lessonTile);
+            }
+        }
+    }
+
+    // Helper method to update the song list with search results
+    private void updateSongList(List<Song> songs) {
+        if (this.songListVBox == null) return;
+        
+        this.songListVBox.getChildren().clear();
+        if (songs == null || songs.isEmpty()) {
+            this.songListVBox.getChildren().add(new Label("No songs found."));
+        } else {
+            for (Song song : songs) {
+                this.songListVBox.getChildren().add(createSongEntry(song));
+            }
+        }
     }
 } 
