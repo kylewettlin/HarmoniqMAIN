@@ -94,6 +94,10 @@ public class HarmoniqView {
     private final DropShadow defaultLessonShadow = new DropShadow(10, Color.rgb(0, 0, 0, 0.15));
     private final DropShadow selectedLessonShadow = new DropShadow(20, Color.rgb(0, 0, 0, 0.4));
 
+    private VBox songListVBox; // Add reference for song list container
+    private TilePane lessonGrid; // Add field for lesson grid container
+    private List<Song> allAssignedSongs; // Store the full list for filtering
+
     public HarmoniqView(Stage stage, HarmoniqFACADE facade) {
         this.stage = stage;
         this.facade = facade;
@@ -234,7 +238,7 @@ public class HarmoniqView {
         Button lessonsButton = new Button("Lessons");
         Button studioButton = new Button("Studio");
         lessonsButton.setOnAction(e -> {
-            this.lessonsController = new LessonsController(facade);
+            this.lessonsController = new LessonsController(facade, this);
             showLessonsScreen(this.lessonsController);
         });
         // Wire up Studio Button action (moved logic here)
@@ -259,33 +263,37 @@ public class HarmoniqView {
 
         // --- Center: Search and Song List ScrollPane ---
         VBox centerArea = new VBox(15);
-        centerArea.setPadding(new Insets(20)); // Add padding back to center area
+        centerArea.setPadding(new Insets(20));
 
         HBox searchBar = new HBox(10);
         searchBar.setAlignment(Pos.CENTER_LEFT);
         TextField searchField = new TextField();
-        searchField.setPromptText("Search here");
+        searchField.setPromptText("Search songs by title or composer");
         searchField.setPrefWidth(300);
         Button searchButton = new Button("Search");
         searchButton.setStyle("-fx-background-color: #003366; -fx-text-fill: white;");
-        searchBar.getChildren().addAll(searchButton, searchField);
         
+        // Search action
+        Runnable performSearch = () -> {
+            if (dashboardController != null) {
+                String query = searchField.getText();
+                dashboardController.handleSongSearch(query); // Call controller method
+            }
+        };
+        searchButton.setOnAction(e -> performSearch.run());
+        searchField.setOnAction(e -> performSearch.run()); // Allow searching with Enter key
+
+        searchBar.getChildren().addAll(searchButton, searchField);
         centerArea.getChildren().add(searchBar);
 
         // Song List Area (inside ScrollPane)
-        VBox songListVBox = new VBox(10);
+        songListVBox = new VBox(10);
         songListVBox.setStyle("-fx-padding: 10;");
+        songListVBox.setId("songListVBox"); // Assign ID for lookup if needed, though field is better
         
-        List<Song> songs = this.dashboardController.getSongs();
-        if (songs == null || songs.isEmpty()) {
-            songListVBox.getChildren().add(new Label("No songs found."));
-        } else {
-            for (Song song : songs) {
-                 songListVBox.getChildren().add(createSongEntry(song));
-            }
-        }
+        // Initial population (will be updated by controller calling updateSongList)
+        updateSongList(this.dashboardController.getSongs()); // Initial population
 
-        // Create ScrollPane for the song list
         ScrollPane songListScrollPane = new ScrollPane();
         songListScrollPane.setContent(songListVBox);
         songListScrollPane.setFitToWidth(true);
@@ -519,7 +527,7 @@ public class HarmoniqView {
         });
         Button lessonsButton = new Button("Lessons");
         lessonsButton.setOnAction(e -> {
-            this.lessonsController = new LessonsController(facade);
+            this.lessonsController = new LessonsController(facade, this);
             showLessonsScreen(this.lessonsController);
         });
         Button studioButton = new Button("Studio");
@@ -955,10 +963,21 @@ public class HarmoniqView {
         HBox searchBar = new HBox(10);
         searchBar.setAlignment(Pos.CENTER_LEFT);
         TextField searchField = new TextField();
-        searchField.setPromptText("Search lesson");
+        searchField.setPromptText("Search assigned lessons");
         searchField.setPrefWidth(300);
         Button searchButton = new Button("Search");
         searchButton.setStyle("-fx-background-color: #003366; -fx-text-fill: white;");
+        
+        // Lesson Search Action
+        Runnable performLessonSearch = () -> {
+            if (lessonsController != null) {
+                String query = searchField.getText();
+                lessonsController.handleLessonSearch(query); // Call controller method
+            }
+        };
+        searchButton.setOnAction(e -> performLessonSearch.run());
+        searchField.setOnAction(e -> performLessonSearch.run());
+        
         searchBar.getChildren().addAll(searchButton, searchField);
         centerContent.getChildren().add(searchBar);
 
@@ -967,31 +986,19 @@ public class HarmoniqView {
         VBox.setVgrow(lessonsArea, Priority.ALWAYS);
 
         // Left Side: Lesson Selection Grid (using TilePane)
-        TilePane lessonGrid = new TilePane();
+        lessonGrid = new TilePane();
         lessonGrid.setPadding(new Insets(10));
         lessonGrid.setHgap(20);
         lessonGrid.setVgap(20);
         lessonGrid.setPrefColumns(2);
+        lessonGrid.setId("lessonGrid"); // Assign ID
 
-        List<Song> assignedSongs = this.lessonsController.getAssignedSongs();
-        Song firstSong = null;
+        // Get the full list and store it
+        allAssignedSongs = this.lessonsController.getAssignedSongs();
         
-        lessonGrid.getChildren().clear();
-        if (assignedSongs == null || assignedSongs.isEmpty()) {
-            lessonGrid.getChildren().add(new Label("No lessons assigned."));
-        } else {
-            firstSong = assignedSongs.get(0);
-            for (Song assignedSong : assignedSongs) {
-                 Node lessonTile = createLessonTile(assignedSong);
-                 if (assignedSong.equals(firstSong)) {
-                     lessonTile.setEffect(selectedLessonShadow); // Apply selected shadow initially
-                     currentlySelectedLessonTile = lessonTile; // Track it
-                 } else {
-                      lessonTile.setEffect(defaultLessonShadow); // Apply default shadow
-                 }
-                 lessonGrid.getChildren().add(lessonTile);
-            }
-        }
+        // Initial population (will be updated by controller calling updateLessonGrid)
+        updateLessonGrid(allAssignedSongs); // Initial population
+
         ScrollPane gridScrollPane = new ScrollPane(lessonGrid);
         gridScrollPane.setFitToWidth(true);
         gridScrollPane.setFitToHeight(true);
@@ -1006,12 +1013,9 @@ public class HarmoniqView {
         detailsPane.setStyle("-fx-background-color: white; -fx-border-color: lightgrey; -fx-border-width: 1; -fx-border-radius: 10;");
         HBox.setHgrow(detailsPane, Priority.ALWAYS);
         
-        // Set initial content (placeholder text)
-        Label initialLabel = new Label(
-            assignedSongs == null || assignedSongs.isEmpty() ? 
-            "No lessons assigned yet." : 
-            "Select a lesson from the left."
-        );
+        // Set initial content (placeholder text) - logic moved inside updateLessonGrid
+        detailsPane.getChildren().clear();
+        Label initialLabel = new Label("Select a lesson or search.");
         initialLabel.setFont(Font.font("System", FontWeight.NORMAL, 16));
         initialLabel.setStyle("-fx-text-fill: grey;");
         detailsPane.getChildren().add(initialLabel);
@@ -1045,10 +1049,7 @@ public class HarmoniqView {
              stage.show();
         }
 
-        // Update details pane for the first song (if it exists) after scene is set
-        if (firstSong != null) {
-            updateLessonDetailsPane(firstSong); 
-        }
+        // Initial details pane update is handled within updateLessonGrid now
     }
     
     private VBox createLessonTile(Song lessonSong) {
@@ -1078,6 +1079,60 @@ public class HarmoniqView {
         });
         
         return tile;
+    }
+
+    // Method to update the displayed lesson grid
+    public void updateLessonGrid(List<Song> filteredSongs) {
+        if (lessonGrid == null) {
+            System.err.println("Cannot update lesson grid: TilePane container not initialized.");
+            return;
+        }
+
+        javafx.application.Platform.runLater(() -> {
+            lessonGrid.getChildren().clear();
+            currentlySelectedLessonTile = null; // Reset selection
+            Song firstSong = null;
+
+            if (filteredSongs == null || filteredSongs.isEmpty()) {
+                Label noLessonsLabel = new Label("No matching lessons found.");
+                noLessonsLabel.setStyle("-fx-padding: 10px;");
+                lessonGrid.getChildren().add(noLessonsLabel);
+                // Clear details pane when no lessons match
+                clearLessonDetailsPane(); 
+            } else {
+                firstSong = filteredSongs.get(0);
+                for (Song assignedSong : filteredSongs) {
+                    Node lessonTile = createLessonTile(assignedSong);
+                    boolean isFirst = assignedSong.equals(firstSong);
+                    // Apply shadow based on whether it's the first in the *filtered* list
+                    lessonTile.setEffect(isFirst ? selectedLessonShadow : defaultLessonShadow);
+                    if (isFirst) {
+                        currentlySelectedLessonTile = lessonTile; // Track the first tile
+                    }
+                    lessonGrid.getChildren().add(lessonTile);
+                }
+                // Update details pane with the first result after filtering
+                if (firstSong != null) {
+                    updateLessonDetailsPane(firstSong);
+                }
+            }
+        });
+    }
+    
+    // Helper to clear the details pane (optional, but good practice)
+    private void clearLessonDetailsPane() {
+         Node lookupResult = stage.getScene().getRoot().lookup("#lessonDetailsPane");
+         if (lookupResult instanceof VBox) {
+              VBox detailsPane = (VBox) lookupResult;
+              detailsPane.getChildren().clear();
+              Label initialLabel = new Label("No lesson selected."); // Or specific message
+              initialLabel.setFont(Font.font("System", FontWeight.NORMAL, 16));
+              initialLabel.setStyle("-fx-text-fill: grey;");
+              detailsPane.getChildren().add(initialLabel);
+              detailsPane.setAlignment(Pos.CENTER);
+         } else {
+              System.err.println("Could not find details pane to clear.");
+         }
     }
 
     // Add helper method to update the details pane
@@ -1390,5 +1445,36 @@ public class HarmoniqView {
         studentSelectionPopupStage.sizeToScene();
         studentSelectionPopupStage.setResizable(false);
         studentSelectionPopupStage.show();
+    }
+
+    // Method to update the displayed song list
+    public void updateSongList(List<Song> songs) {
+        if (songListVBox == null) {
+            System.err.println("Cannot update song list: VBox container not initialized.");
+            return;
+        }
+        
+        // Ensure UI updates happen on the JavaFX Application Thread
+        javafx.application.Platform.runLater(() -> {
+            songListVBox.getChildren().clear(); // Clear previous entries
+            currentlyExpandedDetails = null; // Reset expanded view
+            currentlyHighlightedEntry = null;
+            
+            if (songs == null || songs.isEmpty()) {
+                Label noSongsLabel = new Label("No matching songs found.");
+                noSongsLabel.setStyle("-fx-padding: 10px;");
+                songListVBox.getChildren().add(noSongsLabel);
+            } else {
+                for (Song song : songs) {
+                    try {
+                        songListVBox.getChildren().add(createSongEntry(song));
+                    } catch (Exception e) {
+                        System.err.println("Error creating song entry for: " + (song != null ? song.getTitle() : "null song"));
+                        e.printStackTrace();
+                        // Optionally add an error placeholder in the list
+                    }
+                }
+            }
+        });
     }
 } 

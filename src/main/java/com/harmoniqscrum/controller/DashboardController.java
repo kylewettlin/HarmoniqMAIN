@@ -98,5 +98,26 @@ public class DashboardController {
         return facade.assignLesson(song, student);
     }
 
-    // Add methods here later for handling search, song selection etc.
+    /**
+     * Handles the search request from the view.
+     * @param query The search query entered by the user.
+     */
+    public void handleSongSearch(String query) {
+        System.out.println("Searching songs for query: " + query);
+        List<Song> searchResults;
+        if (query == null || query.trim().isEmpty()) {
+             // If query is empty, get all songs
+             searchResults = facade.searchSongs(""); // Or call a specific getAllSongs if available
+         } else {
+             // Otherwise, perform the search using the facade
+             searchResults = facade.searchSongs(query);
+         }
+         
+         // Update the view with the search results
+         if (view != null) {
+             view.updateSongList(searchResults);
+         } else {
+             System.err.println("DashboardController: View is null, cannot update song list.");
+         }
+    }
 } 
